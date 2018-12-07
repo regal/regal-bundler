@@ -1,0 +1,67 @@
+{
+  "name": "regal-bundler",
+  "version": "1.0.0",
+  "description": "Utility that packages a Regal game into a deployable game bundle",
+  "author": "Joe Cowman <joe.r.cowman@gmail.com> (http://joecowman.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/regal/regal-bundler.git"
+  },
+  "bugs": {
+    "url": "https://github.com/regal/regal-bundler/issues"
+  },
+  "homepage": "https://github.com/regal/regal-bundler",
+  "keywords": [
+    "regal",
+    "regal framework",
+    "game",
+    "bundler"
+  ],
+  "main": "dist/regal-bundler.cjs.js",
+  "module": "dist/regal-bundler.esm.js",
+  "browser": "dist/regal-bundler.umd.min.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "test": "nyc mocha",
+    "build": "rollup -c && tsc -d --emitDeclarationOnly --declarationDir ./dist",
+    "publish-coverage": "nyc report --reporter=text-lcov | coveralls",
+    "check-coverage": "nyc check-coverage --lines 100 --functions 100 --branches 100",
+    "lint": "node node_modules/tslint/bin/tslint -c tslint.json --format stylish 'src/**/*.ts'",
+    "commit": "git-cz"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.2.0",
+    "commitizen": "^3.0.5",
+    "coveralls": "^3.0.2",
+    "cz-conventional-changelog": "^2.1.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "prettier": "^1.15.3",
+    "rollup": "^0.67.4",
+    "rollup-plugin-cleanup": "^3.0.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-terser": "^3.0.0",
+    "rollup-plugin-typescript2": "^0.18.0",
+    "source-map-support": "^0.5.9",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "^3.2.2"
+  },
+  "prettier": {
+    "tabWidth": 4
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
