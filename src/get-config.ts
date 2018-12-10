@@ -1,4 +1,5 @@
-import { LoadedConfiguration, RecursivePartial } from "./interfaces-internal";
+import { LoadedConfiguration } from "./interfaces-internal";
+import { BundlerOptions, RecursivePartial } from "./interfaces-public";
 
 const tempConfig = (): RecursivePartial<LoadedConfiguration> => ({
     gameMetadata: {
@@ -23,9 +24,26 @@ const tempConfig = (): RecursivePartial<LoadedConfiguration> => ({
     }
 });
 
-export const loadConfig = async (
+const loadUserConfig = async (
     regalConfigLocation: string,
     pkgLocation: string
 ): Promise<RecursivePartial<LoadedConfiguration>> => {
-    return Promise.resolve(tempConfig());
+    return tempConfig();
+};
+
+const fillInOpts = (
+    userOpts: RecursivePartial<LoadedConfiguration>
+): LoadedConfiguration => {
+    return userOpts as any; // TODO
+};
+
+export const getConfig = async (
+    opts: RecursivePartial<BundlerOptions>
+): Promise<LoadedConfiguration> => {
+    const userOpts = await loadUserConfig(
+        opts.regalConfigLocation,
+        opts.pkgLocation
+    );
+
+    return fillInOpts(userOpts);
 };

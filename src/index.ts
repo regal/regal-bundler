@@ -10,5 +10,6 @@ export {
     BundlerOptions,
     BundleConfig,
     BundleConfigInput,
-    BundleConfigOutput
+    BundleConfigOutput,
+    RecursivePartial
 } from "./interfaces-public";

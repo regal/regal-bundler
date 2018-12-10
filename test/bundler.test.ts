@@ -1,6 +1,8 @@
 import { expect } from "chai";
 import "mocha";
 
-// TODO: Write new tests
+import { bundle } from "../src/index";
 
-describe("Bundler", function() {});
+describe("Bundler", function() {
+    bundle();
+});
