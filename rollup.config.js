@@ -1,7 +1,6 @@
 import typescript from "rollup-plugin-typescript2";
-import resolve from "rollup-plugin-node-resolve";
 import cleanup from "rollup-plugin-cleanup";
-import { terser } from "rollup-plugin-terser";
+import json from "rollup-plugin-json";
 
 import pkg from "./package.json";
 
@@ -33,25 +32,14 @@ export default [
             { file: pkg.main, format: "cjs", banner },
             { file: pkg.module, format: "esm", banner }
         ],
+        external: Object.keys(pkg.dependencies),
         plugins: [
             tsPlugin,
-            resolve(),
+            json(),
             cleanup({
                 extensions: [".js", ".ts"],
                 comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
                 maxEmptyLines: 0
-            })
-        ],
-        onwarn: suppressCircularImportWarnings
-    },
-    {
-        input: "./src/index.ts",
-        output: { file: pkg.browser, format: "umd", name: "RegalBundler" },
-        plugins: [
-            tsPlugin,
-            resolve(),
-            terser({
-                output: { comments: false, preamble: banner }
             })
         ],
         onwarn: suppressCircularImportWarnings
