@@ -21,7 +21,7 @@ const suppressCircularImportWarnings = (message, defaultFunc) => {
 
 const tsPlugin = typescript({
     tsconfigOverride: {
-        compilerOptions: { module: "ES2015" }
+        compilerOptions: { module: "esNext" }
     }
 });
 
@@ -35,12 +35,12 @@ export default [
         external: Object.keys(pkg.dependencies),
         plugins: [
             tsPlugin,
-            json(),
-            cleanup({
-                extensions: [".js", ".ts"],
-                comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
-                maxEmptyLines: 0
-            })
+            // json(),
+            // cleanup({
+            //     extensions: [".js", ".ts"],
+            //     comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
+            //     maxEmptyLines: 0
+            // })
         ],
         onwarn: suppressCircularImportWarnings
     }

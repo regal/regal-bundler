@@ -1,8 +1,11 @@
-import * as cosmiconfig from "cosmiconfig";
-import * as path from "path";
+import * as _cosmiconfig from "cosmiconfig";
+import * as _path from "path";
 import { GameMetadata } from "regal";
 import { LoadedConfiguration } from "./interfaces-internal";
 import { BundlerOptions, RecursivePartial } from "./interfaces-public";
+
+const cosmiconfig = (_cosmiconfig as any).default || _cosmiconfig;
+const path = (_path as any).default || _path;
 
 // Eliminate readonly modifier - https://stackoverflow.com/questions/42999983/typescript-removing-readonly-modifier
 type Writeable<T> = { -readonly [P in keyof T]-?: T[P] };

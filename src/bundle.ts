@@ -1,4 +1,4 @@
-import * as rollup from "rollup";
+// import * as rollup from "rollup";
 import cleanup from "rollup-plugin-cleanup";
 import resolve from "rollup-plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
@@ -25,5 +25,5 @@ export default async (opts: RecursivePartial<BundlerOptions> = {}) => {
         // ]
     };
 
-    const bundle = await rollup.rollup(rollupOpts);
+    // const bundle = await rollup.rollup(rollupOpts);
 };
