@@ -1,34 +1,51 @@
+import * as cosmiconfig from "cosmiconfig";
+import * as path from "path";
+import { GameMetadata } from "regal";
 import { LoadedConfiguration } from "./interfaces-internal";
 import { BundlerOptions, RecursivePartial } from "./interfaces-public";
 
-const tempConfig = (): RecursivePartial<LoadedConfiguration> => ({
-    gameMetadata: {
-        name: "New Game",
-        author: "Bob Billy",
-        homepage: "http://example.com",
-        options: {
-            debug: true
-        }
-    },
-    bundleConfig: {
-        input: {
-            file: "src/index.ts",
-            ts: true
-        },
-        output: {
-            file: "dist/new-game.regal.js",
-            bundle: "standard",
-            format: "umd",
-            minify: true
-        }
-    }
-});
+// Eliminate readonly modifier - https://stackoverflow.com/questions/42999983/typescript-removing-readonly-modifier
+type Writeable<T> = { -readonly [P in keyof T]-?: T[P] };
+
+const metadataKeys: Array<keyof GameMetadata> = [
+    "name",
+    "author",
+    "description",
+    "homepage",
+    "repository"
+];
 
 const loadUserConfig = async (
-    regalConfigLocation: string,
-    pkgLocation: string
+    configLocation?: string
 ): Promise<RecursivePartial<LoadedConfiguration>> => {
-    return tempConfig();
+    const explorer = cosmiconfig("regal", {
+        searchPlaces: ["package.json", "regal.json"]
+    });
+
+    let config: RecursivePartial<LoadedConfiguration>;
+    const searchResult = await explorer.search(configLocation);
+
+    if (searchResult === null) {
+        config = {
+            gameMetadata: {}
+        };
+    } else {
+        config = searchResult.config;
+    }
+
+    const pkgPath = path.join(configLocation, "package.json");
+    const pkg = await import(pkgPath);
+
+    const metadata: RecursivePartial<Writeable<GameMetadata>> =
+        config.gameMetadata;
+
+    for (const mk of metadataKeys) {
+        if (metadata[mk] === undefined && pkg[mk] !== undefined) {
+            metadata[mk] = pkg[mk];
+        }
+    }
+
+    return config;
 };
 
 const fillInOpts = (
@@ -38,12 +55,9 @@ const fillInOpts = (
 };
 
 export const getConfig = async (
-    opts: RecursivePartial<BundlerOptions>
+    opts: RecursivePartial<BundlerOptions> = {}
 ): Promise<LoadedConfiguration> => {
-    const userOpts = await loadUserConfig(
-        opts.regalConfigLocation,
-        opts.pkgLocation
-    );
+    const userOpts = await loadUserConfig(opts.configLocation);
 
     return fillInOpts(userOpts);
 };

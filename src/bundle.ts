@@ -9,20 +9,20 @@ import { BundlerOptions, RecursivePartial } from "./interfaces-public";
 export default async (opts: RecursivePartial<BundlerOptions> = {}) => {
     const config = await getConfig(opts);
 
-    const rollupOpts: rollup.RollupFileOptions = {
-        input: config.bundleConfig.input.file,
-        plugins: [
-            typescript({
-                tsconfigOverride: {
-                    compilerOptions: { module: "ES2015" }
-                }
-            }),
-            resolve(),
-            cleanup({
-                extensions: [".js", ".ts"],
-                maxEmptyLines: 0
-            })
-        ]
+    const rollupOpts = {
+        input: config.bundleConfig.input.file
+        // plugins: [
+        //     // typescript({
+        //     //     tsconfigOverride: {
+        //     //         compilerOptions: { module: "ES2015" }
+        //     //     }
+        //     // }),
+        //     resolve(),
+        //     cleanup({
+        //         extensions: [".js", ".ts"],
+        //         maxEmptyLines: 0
+        //     })
+        // ]
     };
 
     const bundle = await rollup.rollup(rollupOpts);
