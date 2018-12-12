@@ -1,6 +1,9 @@
-import * as _cosmiconfig from "cosmiconfig";
-import * as _filenamify from "filenamify";
-import * as _path from "path";
+// import * as _cosmiconfig from "cosmiconfig";
+// import * as _filenamify from "filenamify";
+// import * as _path from "path";
+import * as cosmiconfig from "cosmiconfig";
+import * as filenamify from "filenamify";
+import * as path from "path";
 import { GameMetadata } from "regal";
 import { LoadedConfiguration } from "./interfaces-internal";
 import {
@@ -10,10 +13,10 @@ import {
     RecursivePartial
 } from "./interfaces-public";
 
-const fixModule = <T>(o: T) => (o as any).default || o;
-const cosmiconfig = fixModule(_cosmiconfig);
-const filenamify = fixModule(_filenamify);
-const path = fixModule(_path);
+// const fixModule = <T>(o: T) => (o as any).default || o;
+// const cosmiconfig = fixModule(_cosmiconfig);
+// const filenamify = fixModule(_filenamify);
+// const path = fixModule(_path);
 
 // Eliminate readonly modifier - https://stackoverflow.com/questions/42999983/typescript-removing-readonly-modifier
 type Writeable<T> = { -readonly [P in keyof T]-?: T[P] };

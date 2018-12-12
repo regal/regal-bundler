@@ -28,6 +28,7 @@
   "scripts": {
     "test": "nyc mocha",
     "build": "rollup -c && tsc -d --emitDeclarationOnly --declarationDir ./dist/src",
+    "pack": "webpack --config webpack.config.js && tsc -d --emitDeclarationOnly --declarationDir ./dist/src",
     "publish-coverage": "nyc report --reporter=text-lcov | coveralls",
     "check-coverage": "nyc check-coverage --lines 100 --functions 100 --branches 100",
     "lint": "node node_modules/tslint/bin/tslint -c tslint.json --format stylish 'src/**/*.ts'",
@@ -49,6 +50,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
+    "awesome-typescript-loader": "^5.2.1",
     "chai": "^4.2.0",
     "commitizen": "^3.0.5",
     "coveralls": "^3.0.2",
@@ -61,7 +63,9 @@
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.2",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
   },
   "prettier": {
     "tabWidth": 4
