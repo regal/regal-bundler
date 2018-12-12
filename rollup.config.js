@@ -1,6 +1,9 @@
 import typescript from "rollup-plugin-typescript2";
+import replace from "rollup-plugin-re";
 import cleanup from "rollup-plugin-cleanup";
 import json from "rollup-plugin-json";
+import acorn from "acorn";
+import inject from "acorn-dynamic-import/lib/walk";
 
 import pkg from "./package.json";
 
@@ -25,6 +28,8 @@ const tsPlugin = typescript({
     }
 });
 
+inject(acorn);
+
 export default [
     {
         input: "./src/index.ts",
@@ -34,12 +39,24 @@ export default [
         ],
         external: Object.keys(pkg.dependencies),
         plugins: [
+            replace({
+                exclude: "node_modules/**",
+                replaces: {
+                    'import \* as cosmiconfig from "cosmiconfig";': 'import cosmiconfig from "cosmiconfig";',
+                    'import \* as filenamify from "filenamify";': 'import filenamify from "filenamify";',
+                }
+            }),
             tsPlugin,
-            // json(),
+            json(),
             // cleanup({
             //     extensions: [".js", ".ts"],
             //     comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
-            //     maxEmptyLines: 0
+            //     maxEmptyLines: 0,
+            //     acornOptions: {
+            //         plugins: {
+            //             dynamicImport: true
+            //         }
+            //     }
             // })
         ],
         onwarn: suppressCircularImportWarnings
