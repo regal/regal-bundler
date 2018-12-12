@@ -17,7 +17,17 @@ export interface BundleConfigInput {
 
 export interface BundleConfigOutput {
     file: string;
-    bundle: string;
-    format: string;
+    bundle: BundleType;
+    format: ModuleFormat;
     minify: boolean;
+}
+
+export enum BundleType {
+    STANDARD = "standard"
+}
+
+export enum ModuleFormat {
+    CJS = "cjs",
+    ESM = "esm",
+    UMD = "umd"
 }
