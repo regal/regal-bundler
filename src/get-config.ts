@@ -103,5 +103,16 @@ export const getConfig = async (
     opts: RecursivePartial<BundlerOptions> = {}
 ): Promise<LoadedConfiguration> => {
     const userOpts = await loadUserConfig(opts.configLocation);
-    return fillInOpts(userOpts);
+    const filledOpts = fillInOpts(userOpts);
+
+    if (opts.bundler !== undefined) {
+        if (opts.bundler.input !== undefined) {
+            Object.assign(filledOpts.bundleConfig.input, opts.bundler.input);
+        }
+        if (opts.bundler.output !== undefined) {
+            Object.assign(filledOpts.bundleConfig.output, opts.bundler.output);
+        }
+    }
+
+    return filledOpts;
 };
