@@ -1,7 +1,8 @@
 import typescript from "rollup-plugin-typescript2";
-import resolve from "rollup-plugin-node-resolve";
-import cleanup from "rollup-plugin-cleanup";
-import { terser } from "rollup-plugin-terser";
+// import cleanup from "rollup-plugin-cleanup";
+import json from "rollup-plugin-json";
+// import acorn from "acorn";
+// import inject from "acorn-dynamic-import/lib/walk";
 
 import pkg from "./package.json";
 
@@ -22,9 +23,11 @@ const suppressCircularImportWarnings = (message, defaultFunc) => {
 
 const tsPlugin = typescript({
     tsconfigOverride: {
-        compilerOptions: { module: "ES2015" }
+        compilerOptions: { module: "esNext" }
     }
 });
+
+// inject(acorn);
 
 export default [
     {
@@ -33,26 +36,22 @@ export default [
             { file: pkg.main, format: "cjs", banner },
             { file: pkg.module, format: "esm", banner }
         ],
+        external: Object.keys(pkg.dependencies),
         plugins: [
             tsPlugin,
-            resolve(),
-            cleanup({
-                extensions: [".js", ".ts"],
-                comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
-                maxEmptyLines: 0
-            })
-        ],
-        onwarn: suppressCircularImportWarnings
-    },
-    {
-        input: "./src/index.ts",
-        output: { file: pkg.browser, format: "umd", name: "RegalBundler" },
-        plugins: [
-            tsPlugin,
-            resolve(),
-            terser({
-                output: { comments: false, preamble: banner }
-            })
+            json(),
+
+            /* TODO: Waiting on issue with rollup-plugin-cleanup */
+            // cleanup({
+            //     extensions: [".js", ".ts"],
+            //     comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
+            //     maxEmptyLines: 0,
+            //     acornOptions: {
+            //         plugins: {
+            //             dynamicImport: true
+            //         }
+            //     }
+            // })
         ],
         onwarn: suppressCircularImportWarnings
     }

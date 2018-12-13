@@ -5,6 +5,14 @@
  * Licensed under MIT License (see https://github.com/regal/regal-bundler)
  */
 
-// TODO: Implement project
-
-export default (arg: string) => `Hello, ${arg}!`;
+export { default as bundle } from "./bundle";
+export { getConfig } from "./get-config";
+export {
+    BundlerOptions,
+    BundleConfig,
+    BundleConfigInput,
+    BundleConfigOutput,
+    RecursivePartial,
+    BundleType,
+    ModuleFormat
+} from "./interfaces-public";
