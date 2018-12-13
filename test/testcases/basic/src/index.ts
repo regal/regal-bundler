@@ -1,4 +1,4 @@
-import { onStartCommand, onPlayerCommand, on } from "regal";
+import { onStartCommand, onPlayerCommand, on, noop } from "regal";
 
 interface State {
     num: number;
@@ -27,7 +27,7 @@ onPlayerCommand(cmd => game => {
         return incr;
     } else if (cmd.startsWith("d")) {
         return decr;
-    } else {
-        game.output.write("Command not recognized.");
     }
+    game.output.write(`Command not recognized: '${cmd}'.`);
+    return noop;
 });

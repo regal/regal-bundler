@@ -5,38 +5,62 @@ import { getConfig } from "../../../src/get-config";
 import * as path from "path";
 import { BundleType, ModuleFormat } from "../../../src/interfaces-public";
 import { bundle } from "../../../src";
+import { GameResponse } from "regal";
+
+const lines = (response: GameResponse) =>
+    response.output.log.map(ol => ol.data);
 
 describe("Case: basic", function() {
-    it("Loads the correct configuration", function() {
-        return getConfig({
-            configLocation: __dirname
-        }).then(config =>
-            expect(config).to.deep.equal({
-                bundleConfig: {
-                    input: {
-                        file: path.join(__dirname, "src", "index.ts"),
-                        ts: true
-                    },
-                    output: {
-                        bundle: BundleType.STANDARD,
-                        file: path.join(__dirname, "basic.regal.js"),
-                        format: ModuleFormat.CJS,
-                        minify: false
-                    }
+    it("Loads the correct configuration", async function() {
+        const config = await getConfig({ configLocation: __dirname });
+
+        expect(config).to.deep.equal({
+            bundleConfig: {
+                input: {
+                    file: path.join(__dirname, "src", "index.ts"),
+                    ts: true
                 },
-                gameMetadata: {
-                    name: "basic",
-                    author: "Bob Basic"
+                output: {
+                    bundle: BundleType.STANDARD,
+                    file: path.join(__dirname, "basic.regal.js"),
+                    format: ModuleFormat.CJS,
+                    minify: false
                 }
-            })
-        );
+            },
+            gameMetadata: {
+                name: "basic",
+                author: "Bob Basic",
+                options: {} // TODO - remove
+            }
+        });
     });
 
-    it.skip("Creates a functional bundle", function() {
-        return bundle({
-            configLocation: __dirname
-        }).then(() => {
-            expect(true).to.be.true;
-        });
+    it("Creates a functional bundle", async function() {
+        await bundle({ configLocation: __dirname });
+        const Game: any = await import("./basic.regal.js");
+
+        let response: GameResponse = Game.postStartCommand();
+        expect(response.output.wasSuccessful).to.be.true;
+        expect(lines(response)).to.deep.equal(["Game initialized to zero."]);
+
+        response = Game.postPlayerCommand(response.instance, "inc");
+        expect(response.output.wasSuccessful).to.be.true;
+        expect(lines(response)).to.deep.equal([
+            "Game state incremented from 0 to 1."
+        ]);
+
+        for (let i = 0; i < 5; i++) {
+            response = Game.postPlayerCommand(response.instance, "dec");
+        }
+        expect(response.output.wasSuccessful).to.be.true;
+        expect(lines(response)).to.deep.equal([
+            "Game state decremented from -3 to -4."
+        ]);
+
+        response = Game.postPlayerCommand(response.instance, "woof");
+        expect(response.output.wasSuccessful).to.be.true;
+        expect(lines(response)).to.deep.equal([
+            "Command not recognized: 'woof'."
+        ]);
     });
 });

@@ -1,9 +1,9 @@
 import typescript from "rollup-plugin-typescript2";
 import replace from "rollup-plugin-re";
-import cleanup from "rollup-plugin-cleanup";
+// import cleanup from "rollup-plugin-cleanup";
 import json from "rollup-plugin-json";
-import acorn from "acorn";
-import inject from "acorn-dynamic-import/lib/walk";
+// import acorn from "acorn";
+// import inject from "acorn-dynamic-import/lib/walk";
 
 import pkg from "./package.json";
 
@@ -28,7 +28,7 @@ const tsPlugin = typescript({
     }
 });
 
-inject(acorn);
+// inject(acorn);
 
 export default [
     {
