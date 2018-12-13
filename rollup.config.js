@@ -44,6 +44,9 @@ export default [
                 replaces: {
                     'import \* as cosmiconfig from "cosmiconfig";': 'import cosmiconfig from "cosmiconfig";',
                     'import \* as filenamify from "filenamify";': 'import filenamify from "filenamify";',
+                    'import \* as typescript from "rollup-plugin-typescript2";': 'import typescript from "rollup-plugin-typescript2";',
+                    'import \* as resolve from "rollup-plugin-node-resolve";': 'import resolve from "rollup-plugin-node-resolve";',
+                    'import \* as json from "rollup-plugin-json";': 'import json from "rollup-plugin-json";',
                 }
             }),
             tsPlugin,

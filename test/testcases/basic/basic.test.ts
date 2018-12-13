@@ -1,11 +1,16 @@
 import { expect } from "chai";
 import "mocha";
 
-import { getConfig } from "../../../src/get-config";
 import * as path from "path";
-import { BundleType, ModuleFormat } from "../../../src/interfaces-public";
-import { bundle } from "../../../src";
 import { GameResponse } from "regal";
+
+import {
+    getConfig,
+    bundle,
+    BundleType,
+    ModuleFormat
+    // @ts-ignore: import will be resolved
+} from "../../../dist/regal-bundler.cjs.js";
 
 const lines = (response: GameResponse) =>
     response.output.log.map(ol => ol.data);

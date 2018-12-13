@@ -6,6 +6,7 @@
  */
 
 export { default as bundle } from "./bundle";
+export { getConfig } from "./get-config";
 export {
     BundlerOptions,
     BundleConfig,
