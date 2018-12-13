@@ -1,14 +1,18 @@
 import { GameMetadata } from "regal";
 import * as rollup from "rollup";
 import * as insert from "rollup-plugin-insert";
-import * as json from "rollup-plugin-json";
-import * as resolve from "rollup-plugin-node-resolve";
-import * as typescript from "rollup-plugin-typescript2";
+import * as _json from "rollup-plugin-json";
+import * as _resolve from "rollup-plugin-node-resolve";
+import * as _typescript from "rollup-plugin-typescript2";
 import { getConfig } from "./get-config";
 import { BundlerOptions, RecursivePartial } from "./interfaces-public";
 
+// Alias imports to allow executing namespaces
+const json = _json;
+const resolve = _resolve;
+const typescript = _typescript;
+
 const LOG = false;
-// tslint:disable:no-console
 
 const bundleFooter = (md: GameMetadata) => `
 import { Game } from "regal";
@@ -39,6 +43,7 @@ export default async (opts: RecursivePartial<BundlerOptions> = {}) => {
     const bundle = await rollup.rollup(inputOpts);
 
     if (LOG) {
+        // tslint:disable:no-console
         console.log(bundle.imports);
         console.log(bundle.exports);
         console.log(bundle.modules);

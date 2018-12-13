@@ -1,5 +1,5 @@
-import * as cosmiconfig from "cosmiconfig";
-import * as filenamify from "filenamify";
+import * as _cosmiconfig from "cosmiconfig";
+import * as _filenamify from "filenamify";
 import * as path from "path";
 import { GameMetadata } from "regal";
 import { LoadedConfiguration } from "./interfaces-internal";
@@ -10,7 +10,11 @@ import {
     RecursivePartial
 } from "./interfaces-public";
 
-// Eliminate readonly modifier - https://stackoverflow.com/questions/42999983/typescript-removing-readonly-modifier
+// Alias imports to allow executing namespaces
+const cosmiconfig = _cosmiconfig;
+const filenamify = _filenamify;
+
+// Eliminate readonly modifier
 type Writeable<T> = { -readonly [P in keyof T]-?: T[P] };
 
 const metadataKeys: Array<keyof GameMetadata> = [
@@ -21,7 +25,7 @@ const metadataKeys: Array<keyof GameMetadata> = [
     "repository"
 ];
 
-const loadUserConfig = async (
+export const loadUserConfig = async (
     configLocation?: string
 ): Promise<RecursivePartial<LoadedConfiguration>> => {
     const explorer = cosmiconfig("regal", {
@@ -58,7 +62,7 @@ const loadUserConfig = async (
     return config;
 };
 
-const fillInOpts = (
+export const fillInOpts = (
     configLocation: string,
     userOpts: RecursivePartial<LoadedConfiguration>
 ): LoadedConfiguration => {
