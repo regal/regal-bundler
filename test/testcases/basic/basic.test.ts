@@ -37,6 +37,7 @@ describe("Case: basic", function() {
 
     it("Creates a functional bundle", async function() {
         await bundle({ configLocation: __dirname });
+        // @ts-ignore: import will be resolved
         const Game: any = await import("./basic.regal.js");
 
         let response: GameResponse = Game.postStartCommand();
