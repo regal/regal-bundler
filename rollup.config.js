@@ -48,6 +48,8 @@ export default [
             }),
             tsPlugin,
             json(),
+
+            /* TODO: Waiting on issue with rollup-plugin-cleanup */
             // cleanup({
             //     extensions: [".js", ".ts"],
             //     comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments

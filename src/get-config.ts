@@ -55,12 +55,14 @@ const loadUserConfig = async (
 };
 
 const fillInOpts = (
+    configLocation: string,
     userOpts: RecursivePartial<LoadedConfiguration>
 ): LoadedConfiguration => {
+    const dir = configLocation === undefined ? process.cwd() : configLocation;
+
     if (userOpts.bundleConfig === undefined) {
         userOpts.bundleConfig = {};
     }
-
     const c = userOpts.bundleConfig;
 
     if (c.input === undefined) {
@@ -71,7 +73,7 @@ const fillInOpts = (
     }
     if (c.input.file === undefined) {
         const inputFile = c.input.ts ? "index.ts" : "index.js";
-        c.input.file = path.join(process.cwd(), "src", inputFile);
+        c.input.file = path.join(dir, "src", inputFile);
     }
 
     if (c.output === undefined) {
@@ -81,7 +83,7 @@ const fillInOpts = (
         const filename = filenamify(userOpts.gameMetadata.name, {
             replacement: "-"
         }) as string;
-        c.output.file = path.join(process.cwd(), `${filename}.regal.js`);
+        c.output.file = path.join(dir, `${filename}.regal.js`);
     }
     if (c.output.bundle === undefined) {
         c.output.bundle = BundleType.STANDARD;
@@ -100,7 +102,7 @@ export const getConfig = async (
     opts: RecursivePartial<BundlerOptions> = {}
 ): Promise<LoadedConfiguration> => {
     const userOpts = await loadUserConfig(opts.configLocation);
-    const filledOpts = fillInOpts(userOpts);
+    const filledOpts = fillInOpts(opts.configLocation, userOpts);
 
     if (opts.bundler !== undefined) {
         if (opts.bundler.input !== undefined) {
