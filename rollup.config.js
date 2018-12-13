@@ -48,16 +48,16 @@ export default [
             }),
             tsPlugin,
             json(),
-            // cleanup({
-            //     extensions: [".js", ".ts"],
-            //     comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
-            //     maxEmptyLines: 0,
-            //     acornOptions: {
-            //         plugins: {
-            //             dynamicImport: true
-            //         }
-            //     }
-            // })
+            cleanup({
+                extensions: [".js", ".ts"],
+                comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
+                maxEmptyLines: 0,
+                acornOptions: {
+                    plugins: {
+                        dynamicImport: true
+                    }
+                }
+            })
         ],
         onwarn: suppressCircularImportWarnings
     }
