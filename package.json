@@ -37,7 +37,7 @@
     "cosmiconfig": "^5.0.7",
     "filenamify": "^2.1.0",
     "path": "^0.12.7",
-    "regal": "^0.6.1",
+    "regal": "^0.7.1",
     "rollup": "^0.67.4",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-insert": "^0.2.0",

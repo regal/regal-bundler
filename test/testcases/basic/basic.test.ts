@@ -2,7 +2,7 @@ import { expect } from "chai";
 import "mocha";
 
 import * as path from "path";
-import { GameResponse } from "regal";
+import { GameResponse, GameApi } from "regal";
 
 import {
     getConfig,
@@ -43,9 +43,9 @@ describe("Case: basic", function() {
     it("Creates a functional bundle", async function() {
         await bundle({ configLocation: __dirname });
         // @ts-ignore: import will be resolved
-        const Game: any = await import("./basic.regal.js");
+        const Game: GameApi = await import("./basic.regal.js");
 
-        let response: GameResponse = Game.postStartCommand();
+        let response = Game.postStartCommand();
         expect(response.output.wasSuccessful).to.be.true;
         expect(lines(response)).to.deep.equal(["Game initialized to zero."]);
 
