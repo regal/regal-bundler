@@ -34,8 +34,7 @@ describe("Case: basic", function() {
             },
             gameMetadata: {
                 name: "basic",
-                author: "Bob Basic",
-                options: {} // TODO - remove
+                author: "Bob Basic"
             }
         });
     });

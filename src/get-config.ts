@@ -54,10 +54,6 @@ export const loadUserConfig = async (
             metadata[mk] = pkg[mk];
         }
     }
-    if (metadata.options === undefined) {
-        // TODO - remove
-        metadata.options = {};
-    }
 
     return config;
 };

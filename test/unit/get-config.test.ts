@@ -15,8 +15,7 @@ describe("Get Config", function() {
             expect(config).to.deep.equal({
                 gameMetadata: {
                     name: "basic",
-                    author: "Bob Basic",
-                    options: {}
+                    author: "Bob Basic"
                 }
             });
         });
