@@ -12,8 +12,6 @@ const json = _json;
 const resolve = _resolve;
 const typescript = _typescript;
 
-const LOG = false;
-
 const bundleFooter = (md: GameMetadata) => `
 import { Game } from "regal";
 /** Initialize game **/
@@ -42,25 +40,11 @@ export default async (opts: RecursivePartial<BundlerOptions> = {}) => {
 
     const bundle = await rollup.rollup(inputOpts);
 
-    if (LOG) {
-        // tslint:disable:no-console
-        console.log(bundle.imports);
-        console.log(bundle.exports);
-        console.log(bundle.modules);
-    }
-
     const outputOpts: rollup.OutputOptions = {
         file: config.bundleConfig.output.file,
         format: config.bundleConfig.output.format,
         banner: "/** BUNDLED GAME */"
     };
-
-    const { code, map } = await bundle.generate(outputOpts);
-
-    if (LOG) {
-        console.log(code);
-        console.log(map);
-    }
 
     await bundle.write(outputOpts);
 };
