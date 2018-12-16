@@ -1,8 +1,8 @@
 import typescript from "rollup-plugin-typescript2";
-// import cleanup from "rollup-plugin-cleanup";
+import cleanup from "rollup-plugin-cleanup";
 import json from "rollup-plugin-json";
-// import acorn from "acorn";
-// import inject from "acorn-dynamic-import/lib/walk";
+import acorn from "acorn";
+import inject from "acorn-dynamic-import/lib/inject";
 
 import pkg from "./package.json";
 
@@ -27,7 +27,7 @@ const tsPlugin = typescript({
     }
 });
 
-// inject(acorn);
+inject(acorn);
 
 export default [
     {
@@ -40,18 +40,16 @@ export default [
         plugins: [
             tsPlugin,
             json(),
-
-            /* TODO: Waiting on issue with rollup-plugin-cleanup */
-            // cleanup({
-            //     extensions: [".js", ".ts"],
-            //     comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
-            //     maxEmptyLines: 0,
-            //     acornOptions: {
-            //         plugins: {
-            //             dynamicImport: true
-            //         }
-            //     }
-            // })
+            cleanup({
+                extensions: [".js", ".ts"],
+                comments: /^((?!(Joseph R Cowman)|tslint)[\s\S])*$/, // Removes file-header comments and tslint comments
+                maxEmptyLines: 0,
+                acornOptions: {
+                    plugins: {
+                        dynamicImport: true
+                    }
+                }
+            })
         ],
         onwarn: suppressCircularImportWarnings
     }
