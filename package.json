@@ -25,13 +25,14 @@
     "dist/"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "npm run test-unit && npm run test-cases",
     "test-unit": "jest test/unit --coverage",
     "test-cases": "jest test/cases",
     "build": "rollup -c && tsc -d --emitDeclarationOnly --declarationDir ./dist/src",
     "clean": "npm run clean-dist && npm run clean-tests",
     "clean-dist": "trash dist",
     "clean-tests": "trash test/cases/**/*.regal.js",
+    "check": "npm run build && npm run test && npm run clean",
     "publish-coverage": "cat ./coverage/lcov.info | coveralls",
     "lint": "node node_modules/tslint/bin/tslint -c tslint.json --format stylish 'src/**/*.ts'",
     "commit": "git-cz"
