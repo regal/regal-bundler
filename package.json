@@ -20,14 +20,18 @@
   ],
   "main": "dist/regal-bundler.cjs.js",
   "module": "dist/regal-bundler.esm.js",
-  "browser": "dist/regal-bundler.umd.min.js",
   "types": "dist/src/index.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
     "test": "jest",
+    "test-unit": "jest test/unit --coverage",
+    "test-cases": "jest test/cases",
     "build": "rollup -c && tsc -d --emitDeclarationOnly --declarationDir ./dist/src",
+    "clean": "npm run clean-dist && npm run clean-tests",
+    "clean-dist": "trash dist",
+    "clean-tests": "trash test/cases/**/*.regal.js",
     "publish-coverage": "cat ./coverage/lcov.info | coveralls",
     "lint": "node node_modules/tslint/bin/tslint -c tslint.json --format stylish 'src/**/*.ts'",
     "commit": "git-cz"
@@ -55,6 +59,7 @@
     "jest": "^23.6.0",
     "prettier": "^1.15.3",
     "rollup-plugin-cleanup": "^3.0.0",
+    "trash-cli": "^1.4.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",

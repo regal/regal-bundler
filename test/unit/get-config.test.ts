@@ -6,7 +6,7 @@ describe("Get Config", () => {
     describe("loadUserConfig", () => {
         it.only("Loads config properly", async () => {
             const config = await loadUserConfig(
-                path.join(__dirname, "..", "testcases", "basic")
+                path.join(__dirname, "..", "cases", "basic")
             );
 
             expect(config).toEqual({
