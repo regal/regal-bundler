@@ -23,7 +23,7 @@ export default async (opts: RecursivePartial<BundlerOptions> = {}) => {
     const config = await getConfig(opts);
 
     const inputOpts: rollup.RollupFileOptions = {
-        input: config.bundleConfig.input.file,
+        input: config.bundler.input.file,
         plugins: [
             (typescript as any)({
                 tsconfigOverride: {
@@ -32,8 +32,8 @@ export default async (opts: RecursivePartial<BundlerOptions> = {}) => {
             }),
             resolve(),
             json({ exclude: "node_modules/**" }),
-            insert.append(bundleFooter(config.gameMetadata), {
-                include: config.bundleConfig.input.file
+            insert.append(bundleFooter(config.game), {
+                include: config.bundler.input.file
             })
         ]
     };
@@ -41,8 +41,8 @@ export default async (opts: RecursivePartial<BundlerOptions> = {}) => {
     const bundle = await rollup.rollup(inputOpts);
 
     const outputOpts: rollup.OutputOptions = {
-        file: config.bundleConfig.output.file,
-        format: config.bundleConfig.output.format,
+        file: config.bundler.output.file,
+        format: config.bundler.output.format,
         banner: "/** BUNDLED GAME */"
     };
 

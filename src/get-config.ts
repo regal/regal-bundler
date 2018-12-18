@@ -37,7 +37,7 @@ export const loadUserConfig = async (
 
     if (searchResult === null) {
         config = {
-            gameMetadata: {}
+            game: {}
         };
     } else {
         config = searchResult.config;
@@ -46,8 +46,7 @@ export const loadUserConfig = async (
     const pkgPath = path.join(configLocation, "package.json");
     const pkg = await import(pkgPath);
 
-    const metadata: RecursivePartial<Writeable<GameMetadata>> =
-        config.gameMetadata;
+    const metadata: RecursivePartial<Writeable<GameMetadata>> = config.game;
 
     for (const mk of metadataKeys) {
         if (metadata[mk] === undefined && pkg[mk] !== undefined) {
@@ -64,10 +63,10 @@ export const fillInOpts = (
 ): LoadedConfiguration => {
     const dir = configLocation === undefined ? process.cwd() : configLocation;
 
-    if (userOpts.bundleConfig === undefined) {
-        userOpts.bundleConfig = {};
+    if (userOpts.bundler === undefined) {
+        userOpts.bundler = {};
     }
-    const c = userOpts.bundleConfig;
+    const c = userOpts.bundler;
 
     if (c.input === undefined) {
         c.input = {};
@@ -84,7 +83,7 @@ export const fillInOpts = (
         c.output = {};
     }
     if (c.output.file === undefined) {
-        const filename = filenamify(userOpts.gameMetadata.name, {
+        const filename = filenamify(userOpts.game.name, {
             replacement: "-"
         }) as string;
         c.output.file = path.join(dir, `${filename}.regal.js`);
@@ -110,10 +109,10 @@ export const getConfig = async (
 
     if (opts.bundler !== undefined) {
         if (opts.bundler.input !== undefined) {
-            Object.assign(filledOpts.bundleConfig.input, opts.bundler.input);
+            Object.assign(filledOpts.bundler.input, opts.bundler.input);
         }
         if (opts.bundler.output !== undefined) {
-            Object.assign(filledOpts.bundleConfig.output, opts.bundler.output);
+            Object.assign(filledOpts.bundler.output, opts.bundler.output);
         }
     }
 
