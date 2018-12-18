@@ -26,7 +26,7 @@ const metadataKeys: Array<keyof GameMetadata> = [
 ];
 
 export const loadUserConfig = async (
-    configLocation?: string
+    configLocation: string
 ): Promise<RecursivePartial<LoadedConfiguration>> => {
     const explorer = cosmiconfig("regal", {
         searchPlaces: ["package.json", "regal.json"]
@@ -61,8 +61,6 @@ export const fillInOpts = (
     configLocation: string,
     userOpts: RecursivePartial<LoadedConfiguration>
 ): LoadedConfiguration => {
-    const dir = configLocation === undefined ? process.cwd() : configLocation;
-
     if (userOpts.bundler === undefined) {
         userOpts.bundler = {};
     }
@@ -76,7 +74,7 @@ export const fillInOpts = (
     }
     if (c.input.file === undefined) {
         const inputFile = c.input.ts ? "index.ts" : "index.js";
-        c.input.file = path.join(dir, "src", inputFile);
+        c.input.file = path.join(configLocation, "src", inputFile);
     }
 
     if (c.output === undefined) {
@@ -86,7 +84,7 @@ export const fillInOpts = (
         const filename = filenamify(userOpts.game.name, {
             replacement: "-"
         }) as string;
-        c.output.file = path.join(dir, `${filename}.regal.js`);
+        c.output.file = path.join(configLocation, `${filename}.regal.js`);
     }
     if (c.output.bundle === undefined) {
         c.output.bundle = BundleType.STANDARD;
@@ -104,6 +102,10 @@ export const fillInOpts = (
 export const getConfig = async (
     opts: RecursivePartial<BundlerOptions> = {}
 ): Promise<LoadedConfiguration> => {
+    if (opts.configLocation === undefined) {
+        opts.configLocation = process.cwd();
+    }
+
     const userOpts = await loadUserConfig(opts.configLocation);
     const filledOpts = fillInOpts(opts.configLocation, userOpts);
 
