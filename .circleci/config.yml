@@ -34,10 +34,6 @@ jobs:
             # run tests!
             - run: npm test
 
-            # - run:
-            #       name: Publish Test Coverage
-            #       command: npm run publish-coverage
-
-            # - run:
-            #       name: Check Test Coverage
-            #       command: npm run check-coverage
+            - run:
+                  name: Publish Test Coverage
+                  command: npm run publish-coverage

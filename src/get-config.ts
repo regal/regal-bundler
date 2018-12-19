@@ -1,7 +1,8 @@
+import * as _slugify from "@sindresorhus/slugify";
 import * as _cosmiconfig from "cosmiconfig";
-import * as _filenamify from "filenamify";
 import * as path from "path";
-import { GameMetadata } from "regal";
+import { GameMetadata, RegalError } from "regal";
+import * as _sanitize from "sanitize-filename";
 import { LoadedConfiguration } from "./interfaces-internal";
 import {
     BundlerOptions,
@@ -12,7 +13,8 @@ import {
 
 // Alias imports to allow executing namespaces
 const cosmiconfig = _cosmiconfig;
-const filenamify = _filenamify;
+const slugify = _slugify;
+const sanitize = _sanitize;
 
 // Eliminate readonly modifier
 type Writeable<T> = { -readonly [P in keyof T]-?: T[P] };
@@ -26,7 +28,7 @@ const metadataKeys: Array<keyof GameMetadata> = [
 ];
 
 export const loadUserConfig = async (
-    configLocation?: string
+    configLocation: string
 ): Promise<RecursivePartial<LoadedConfiguration>> => {
     const explorer = cosmiconfig("regal", {
         searchPlaces: ["package.json", "regal.json"]
@@ -37,7 +39,7 @@ export const loadUserConfig = async (
 
     if (searchResult === null) {
         config = {
-            gameMetadata: {}
+            game: {}
         };
     } else {
         config = searchResult.config;
@@ -46,8 +48,7 @@ export const loadUserConfig = async (
     const pkgPath = path.join(configLocation, "package.json");
     const pkg = await import(pkgPath);
 
-    const metadata: RecursivePartial<Writeable<GameMetadata>> =
-        config.gameMetadata;
+    const metadata: RecursivePartial<Writeable<GameMetadata>> = config.game;
 
     for (const mk of metadataKeys) {
         if (metadata[mk] === undefined && pkg[mk] !== undefined) {
@@ -58,36 +59,45 @@ export const loadUserConfig = async (
     return config;
 };
 
+const makeFileName = (gameName: string) =>
+    `${sanitize(slugify(gameName))}.regal.js`;
+
 export const fillInOpts = (
     configLocation: string,
     userOpts: RecursivePartial<LoadedConfiguration>
 ): LoadedConfiguration => {
-    const dir = configLocation === undefined ? process.cwd() : configLocation;
-
-    if (userOpts.bundleConfig === undefined) {
-        userOpts.bundleConfig = {};
+    if (userOpts.game === undefined || userOpts.game.name === undefined) {
+        throw new RegalError("game.name must be defined.");
     }
-    const c = userOpts.bundleConfig;
+
+    if (userOpts.bundler === undefined) {
+        userOpts.bundler = {};
+    }
+    const c = userOpts.bundler;
 
     if (c.input === undefined) {
         c.input = {};
     }
     if (c.input.ts === undefined) {
-        c.input.ts = true;
+        if (c.input.file !== undefined && c.input.file.endsWith("js")) {
+            c.input.ts = false;
+        } else {
+            c.input.ts = true;
+        }
     }
     if (c.input.file === undefined) {
         const inputFile = c.input.ts ? "index.ts" : "index.js";
-        c.input.file = path.join(dir, "src", inputFile);
+        c.input.file = path.join(configLocation, "src", inputFile);
     }
 
     if (c.output === undefined) {
         c.output = {};
     }
     if (c.output.file === undefined) {
-        const filename = filenamify(userOpts.gameMetadata.name, {
-            replacement: "-"
-        }) as string;
-        c.output.file = path.join(dir, `${filename}.regal.js`);
+        c.output.file = path.join(
+            configLocation,
+            makeFileName(userOpts.game.name)
+        );
     }
     if (c.output.bundle === undefined) {
         c.output.bundle = BundleType.STANDARD;
@@ -105,17 +115,21 @@ export const fillInOpts = (
 export const getConfig = async (
     opts: RecursivePartial<BundlerOptions> = {}
 ): Promise<LoadedConfiguration> => {
+    if (opts.configLocation === undefined) {
+        opts.configLocation = process.cwd();
+    }
+
     const userOpts = await loadUserConfig(opts.configLocation);
-    const filledOpts = fillInOpts(opts.configLocation, userOpts);
+    fillInOpts(opts.configLocation, userOpts);
 
     if (opts.bundler !== undefined) {
         if (opts.bundler.input !== undefined) {
-            Object.assign(filledOpts.bundleConfig.input, opts.bundler.input);
+            Object.assign(userOpts.bundler.input, opts.bundler.input);
         }
         if (opts.bundler.output !== undefined) {
-            Object.assign(filledOpts.bundleConfig.output, opts.bundler.output);
+            Object.assign(userOpts.bundler.output, opts.bundler.output);
         }
     }
 
-    return filledOpts;
+    return userOpts as LoadedConfiguration;
 };
