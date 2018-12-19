@@ -17,7 +17,7 @@ describe("Case: basic", () => {
         const config = await getConfig({ configLocation: __dirname });
 
         expect(config).toEqual({
-            bundleConfig: {
+            bundler: {
                 input: {
                     file: path.join(__dirname, "src", "index.ts"),
                     ts: true
@@ -29,7 +29,7 @@ describe("Case: basic", () => {
                     minify: false
                 }
             },
-            gameMetadata: {
+            game: {
                 name: "basic",
                 author: "Bob Basic"
             }
