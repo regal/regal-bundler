@@ -1,9 +1,9 @@
 import * as cosmiconfig from "cosmiconfig";
 import * as path from "path";
 
-import { loadUserConfig, fillInOpts } from "../../src/get-config";
+import * as Config from "../../src/get-config";
 import { LoadedConfiguration } from "../../src/interfaces-internal";
-import { BundleType, ModuleFormat } from "../../src/interfaces-public";
+import { BundleType, ModuleFormat, RecursivePartial } from "../../src";
 
 // Mock importing package.json
 const pkgRetValue = jest.fn();
@@ -58,7 +58,7 @@ describe("Get Config", () => {
             mockPkgImport({});
             mockCosmiconfig(regalConfig);
 
-            const config = await loadUserConfig(process.cwd());
+            const config = await Config.loadUserConfig(process.cwd());
 
             expect(config).toEqual(regalConfig);
         });
@@ -77,7 +77,7 @@ describe("Get Config", () => {
             mockPkgImport(pkgConfig);
             mockCosmiconfig(null);
 
-            const config = await loadUserConfig(process.cwd());
+            const config = await Config.loadUserConfig(process.cwd());
 
             expect(config).toEqual({
                 game: expectedConfig
@@ -100,7 +100,7 @@ describe("Get Config", () => {
             mockCosmiconfig(regalConfig);
             mockPkgImport(pkgConfig);
 
-            const config = await loadUserConfig(process.cwd());
+            const config = await Config.loadUserConfig(process.cwd());
 
             expect(config).toEqual(regalConfig);
         });
@@ -108,14 +108,14 @@ describe("Get Config", () => {
 
     describe("fillInOpts", () => {
         it("Errors if game.name is not defined", () => {
-            expect(() => fillInOpts(process.cwd(), {})).toThrow(
+            expect(() => Config.fillInOpts(process.cwd(), {})).toThrow(
                 "RegalError: game.name must be defined."
             );
         });
 
         it("Fills in all default values if nothing is specified", () => {
             expect(
-                fillInOpts(process.cwd(), {
+                Config.fillInOpts(process.cwd(), {
                     game: { name: "My Cool Game" }
                 })
             ).toEqual({
@@ -164,12 +164,14 @@ describe("Get Config", () => {
                 JSON.stringify(config)
             );
 
-            expect(fillInOpts(process.cwd(), configCopy)).toEqual(config);
+            expect(Config.fillInOpts(process.cwd(), configCopy)).toEqual(
+                config
+            );
         });
 
         it("input.ts defaults to false if input.file is specified as ending with .js", () => {
             expect(
-                fillInOpts(process.cwd(), {
+                Config.fillInOpts(process.cwd(), {
                     game: { name: "foo" },
                     bundler: { input: { file: "index.js" } }
                 }).bundler.input.ts
@@ -178,11 +180,92 @@ describe("Get Config", () => {
 
         it("input.file defaults to .js extension if input.ts is specified as false", () => {
             expect(
-                fillInOpts(process.cwd(), {
+                Config.fillInOpts(process.cwd(), {
                     game: { name: "bar" },
                     bundler: { input: { ts: false } }
                 }).bundler.input.file
             ).toBe(path.join(process.cwd(), "src", "index.js"));
+        });
+    });
+
+    describe("getConfig", () => {
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        it("opts.configLocation defaults to the project directory", async () => {
+            const loadUserConfig = jest
+                .spyOn(Config, "loadUserConfig")
+                .mockResolvedValue({});
+            const fillInOpts = jest
+                .spyOn(Config, "fillInOpts")
+                .mockReturnValue({});
+
+            await Config.getConfig();
+
+            expect(loadUserConfig).toBeCalledWith(process.cwd());
+            expect(fillInOpts).toBeCalledWith(process.cwd(), {});
+        });
+
+        it("opts argument overrides options loaded from configuration (1)", async () => {
+            const loadedConfig: RecursivePartial<LoadedConfiguration> = {
+                game: {
+                    name: "My Cool Game",
+                    author: "Joe Cowman"
+                },
+                bundler: {
+                    output: {
+                        format: ModuleFormat.ESM,
+                        minify: true
+                    }
+                }
+            };
+
+            jest.spyOn(Config, "loadUserConfig").mockResolvedValue(
+                loadedConfig
+            );
+
+            const result = await Config.getConfig({
+                configLocation: __dirname,
+                bundler: { output: { minify: false } }
+            });
+
+            expect(result.game).toEqual(loadedConfig.game);
+            expect(result.bundler.output).toEqual({
+                format: ModuleFormat.ESM,
+                minify: false,
+                file: path.join(__dirname, "my-cool-game.regal.js"),
+                bundle: BundleType.STANDARD
+            });
+        });
+
+        it("opts argument overrides options loaded from configuration (2)", async () => {
+            const loadedConfig: RecursivePartial<LoadedConfiguration> = {
+                game: {
+                    name: "My Cool Game",
+                    author: "Joe Cowman"
+                },
+                bundler: {
+                    input: {
+                        ts: false
+                    }
+                }
+            };
+
+            jest.spyOn(Config, "loadUserConfig").mockResolvedValue(
+                loadedConfig
+            );
+
+            const result = await Config.getConfig({
+                configLocation: __dirname,
+                bundler: { input: { ts: true } }
+            });
+
+            expect(result.game).toEqual(loadedConfig.game);
+            expect(result.bundler.input).toEqual({
+                ts: true,
+                file: path.join(__dirname, "src", "index.js")
+            });
         });
     });
 });

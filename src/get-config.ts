@@ -120,16 +120,16 @@ export const getConfig = async (
     }
 
     const userOpts = await loadUserConfig(opts.configLocation);
-    const filledOpts = fillInOpts(opts.configLocation, userOpts);
+    fillInOpts(opts.configLocation, userOpts);
 
     if (opts.bundler !== undefined) {
         if (opts.bundler.input !== undefined) {
-            Object.assign(filledOpts.bundler.input, opts.bundler.input);
+            Object.assign(userOpts.bundler.input, opts.bundler.input);
         }
         if (opts.bundler.output !== undefined) {
-            Object.assign(filledOpts.bundler.output, opts.bundler.output);
+            Object.assign(userOpts.bundler.output, opts.bundler.output);
         }
     }
 
-    return filledOpts;
+    return userOpts as LoadedConfiguration;
 };
