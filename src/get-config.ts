@@ -1,7 +1,8 @@
+import * as _slugify from "@sindresorhus/slugify";
 import * as _cosmiconfig from "cosmiconfig";
-import * as _filenamify from "filenamify";
 import * as path from "path";
-import { GameMetadata } from "regal";
+import { GameMetadata, RegalError } from "regal";
+import * as _sanitize from "sanitize-filename";
 import { LoadedConfiguration } from "./interfaces-internal";
 import {
     BundlerOptions,
@@ -12,7 +13,8 @@ import {
 
 // Alias imports to allow executing namespaces
 const cosmiconfig = _cosmiconfig;
-const filenamify = _filenamify;
+const slugify = _slugify;
+const sanitize = _sanitize;
 
 // Eliminate readonly modifier
 type Writeable<T> = { -readonly [P in keyof T]-?: T[P] };
@@ -57,10 +59,17 @@ export const loadUserConfig = async (
     return config;
 };
 
+const makeFileName = (gameName: string) =>
+    `${sanitize(slugify(gameName))}.regal.js`;
+
 export const fillInOpts = (
     configLocation: string,
     userOpts: RecursivePartial<LoadedConfiguration>
 ): LoadedConfiguration => {
+    if (userOpts.game === undefined || userOpts.game.name === undefined) {
+        throw new RegalError("game.name must be defined");
+    }
+
     if (userOpts.bundler === undefined) {
         userOpts.bundler = {};
     }
@@ -81,10 +90,10 @@ export const fillInOpts = (
         c.output = {};
     }
     if (c.output.file === undefined) {
-        const filename = filenamify(userOpts.game.name, {
-            replacement: "-"
-        }) as string;
-        c.output.file = path.join(configLocation, `${filename}.regal.js`);
+        c.output.file = path.join(
+            configLocation,
+            makeFileName(userOpts.game.name)
+        );
     }
     if (c.output.bundle === undefined) {
         c.output.bundle = BundleType.STANDARD;

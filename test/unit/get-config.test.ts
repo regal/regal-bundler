@@ -1,6 +1,7 @@
 import * as cosmiconfig from "cosmiconfig";
+import * as path from "path";
 
-import { loadUserConfig } from "../../src/get-config";
+import { loadUserConfig, fillInOpts } from "../../src/get-config";
 import { LoadedConfiguration } from "../../src/interfaces-internal";
 import { BundleType, ModuleFormat } from "../../src/interfaces-public";
 
@@ -102,6 +103,32 @@ describe("Get Config", () => {
             const config = await loadUserConfig(process.cwd());
 
             expect(config).toEqual(regalConfig);
+        });
+    });
+
+    describe("fillInOpts", () => {
+        it("Fills in all default values if nothing is specified", () => {
+            expect(
+                fillInOpts(process.cwd(), {
+                    game: { name: "My Cool Game" }
+                })
+            ).toEqual({
+                bundler: {
+                    input: {
+                        ts: true,
+                        file: path.join(process.cwd(), "src", "index.ts")
+                    },
+                    output: {
+                        file: path.join(process.cwd(), "my-cool-game.regal.js"),
+                        bundle: BundleType.STANDARD,
+                        format: ModuleFormat.CJS,
+                        minify: false
+                    }
+                },
+                game: {
+                    name: "My Cool Game"
+                }
+            });
         });
     });
 });
