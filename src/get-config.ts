@@ -67,7 +67,7 @@ export const fillInOpts = (
     userOpts: RecursivePartial<LoadedConfiguration>
 ): LoadedConfiguration => {
     if (userOpts.game === undefined || userOpts.game.name === undefined) {
-        throw new RegalError("game.name must be defined");
+        throw new RegalError("game.name must be defined.");
     }
 
     if (userOpts.bundler === undefined) {
@@ -79,7 +79,11 @@ export const fillInOpts = (
         c.input = {};
     }
     if (c.input.ts === undefined) {
-        c.input.ts = true;
+        if (c.input.file !== undefined && c.input.file.endsWith("js")) {
+            c.input.ts = false;
+        } else {
+            c.input.ts = true;
+        }
     }
     if (c.input.file === undefined) {
         const inputFile = c.input.ts ? "index.ts" : "index.js";

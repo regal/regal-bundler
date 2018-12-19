@@ -107,6 +107,12 @@ describe("Get Config", () => {
     });
 
     describe("fillInOpts", () => {
+        it("Errors if game.name is not defined", () => {
+            expect(() => fillInOpts(process.cwd(), {})).toThrow(
+                "RegalError: game.name must be defined."
+            );
+        });
+
         it("Fills in all default values if nothing is specified", () => {
             expect(
                 fillInOpts(process.cwd(), {
@@ -129,6 +135,54 @@ describe("Get Config", () => {
                     name: "My Cool Game"
                 }
             });
+        });
+
+        it("Does not fill in values if they're specified", () => {
+            const config: LoadedConfiguration = {
+                game: {
+                    name: "My Cool Game",
+                    author: "Joe Cowman",
+                    options: {
+                        seed: "bloop"
+                    }
+                },
+                bundler: {
+                    input: {
+                        ts: true,
+                        file: "start.ts"
+                    },
+                    output: {
+                        file: "out.js",
+                        bundle: BundleType.STANDARD,
+                        format: ModuleFormat.ESM,
+                        minify: true
+                    }
+                }
+            };
+
+            const configCopy: LoadedConfiguration = JSON.parse(
+                JSON.stringify(config)
+            );
+
+            expect(fillInOpts(process.cwd(), configCopy)).toEqual(config);
+        });
+
+        it("input.ts defaults to false if input.file is specified as ending with .js", () => {
+            expect(
+                fillInOpts(process.cwd(), {
+                    game: { name: "foo" },
+                    bundler: { input: { file: "index.js" } }
+                }).bundler.input.ts
+            ).toBe(false);
+        });
+
+        it("input.file defaults to .js extension if input.ts is specified as false", () => {
+            expect(
+                fillInOpts(process.cwd(), {
+                    game: { name: "bar" },
+                    bundler: { input: { ts: false } }
+                }).bundler.input.file
+            ).toBe(path.join(process.cwd(), "src", "index.js"));
         });
     });
 });
