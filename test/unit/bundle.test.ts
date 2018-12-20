@@ -93,5 +93,21 @@ describe("Bundle", () => {
             const plugins = getPlugins(config);
             expect(plugins.find(p => p.name === "terser")).toBeUndefined();
         });
+
+        it("Includes typescript plugin if input.ts is true", () => {
+            const config = sampleConfig();
+            config.bundler.input.ts = true;
+
+            const plugins = getPlugins(config);
+            expect(plugins.find(p => p.name === "rpt2")).not.toBeUndefined();
+        });
+
+        it("Does not include typescript plugin if input.ts is false", () => {
+            const config = sampleConfig();
+            config.bundler.input.ts = false;
+
+            const plugins = getPlugins(config);
+            expect(plugins.find(p => p.name === "rpt2")).toBeUndefined();
+        });
     });
 });
