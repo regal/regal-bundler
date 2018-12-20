@@ -1,0 +1,8 @@
+{
+  "name": "basic",
+  "author": "Bob Basic",
+  "version": "1.0.0",
+  "dependencies": {
+    "regal": "^0.7.1"
+  }
+}
