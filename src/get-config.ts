@@ -38,11 +38,13 @@ export const loadUserConfig = async (
     const searchResult = await explorer.search(configLocation);
 
     if (searchResult === null) {
-        config = {
-            game: {}
-        };
+        config = {};
     } else {
         config = searchResult.config;
+    }
+
+    if (config.game === undefined) {
+        config.game = {};
     }
 
     const pkgPath = path.join(configLocation, "package.json");

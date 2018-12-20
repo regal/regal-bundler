@@ -1,0 +1,14 @@
+{
+    "name": "js-basic",
+    "author": "author",
+    "regal": {
+        "bundler": {
+            "input": {
+                "ts": false
+            }
+        }
+    },
+    "dependencies": {
+        "regal": "^0.7.1"
+    }
+}
