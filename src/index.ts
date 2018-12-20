@@ -13,6 +13,5 @@ export {
     BundleConfigInput,
     BundleConfigOutput,
     RecursivePartial,
-    BundleType,
     ModuleFormat
 } from "./interfaces-public";

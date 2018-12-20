@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
-import { GameResponse, GameApi } from "regal";
+import { GameApi } from "regal";
 import { lines } from "../../test-utils";
 import { bundleHeader } from "../../../src/bundle";
 

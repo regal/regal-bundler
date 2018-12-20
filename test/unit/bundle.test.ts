@@ -1,4 +1,4 @@
-import { bundle, BundleType, ModuleFormat } from "../../src";
+import { bundle, ModuleFormat } from "../../src";
 import * as rollup from "rollup";
 import { getConfig } from "../../src/get-config";
 import { bundleHeader, getPlugins } from "../../src/bundle";
@@ -19,7 +19,7 @@ const sampleConfig = () => ({
         },
         output: {
             file: "sample/out",
-            bundle: BundleType.STANDARD,
+            bundle: "standard",
             format: ModuleFormat.CJS,
             minify: false
         }

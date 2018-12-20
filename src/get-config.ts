@@ -6,7 +6,6 @@ import * as _sanitize from "sanitize-filename";
 import { LoadedConfiguration } from "./interfaces-internal";
 import {
     BundlerOptions,
-    BundleType,
     ModuleFormat,
     RecursivePartial
 } from "./interfaces-public";
@@ -106,7 +105,7 @@ export const fillInOpts = (
         c.output.file = path.join(configLocation, c.output.file);
     }
     if (c.output.bundle === undefined) {
-        c.output.bundle = BundleType.STANDARD;
+        c.output.bundle = "standard";
     }
     if (c.output.format === undefined) {
         c.output.format = ModuleFormat.CJS;

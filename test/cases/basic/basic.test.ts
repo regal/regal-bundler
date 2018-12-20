@@ -6,7 +6,6 @@ import { lines } from "../../test-utils";
 import {
     getConfig,
     bundle,
-    BundleType,
     ModuleFormat
     // @ts-ignore: import will be resolved
 } from "../../../dist/regal-bundler.cjs.js";
@@ -27,7 +26,7 @@ describe("Case: Basic", () => {
                     ts: true
                 },
                 output: {
-                    bundle: BundleType.STANDARD,
+                    bundle: "standard",
                     file: path.join(__dirname, "basic.regal.js"),
                     format: ModuleFormat.CJS,
                     minify: false
