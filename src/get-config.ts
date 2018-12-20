@@ -88,6 +88,8 @@ export const fillInOpts = (
     if (c.input.file === undefined) {
         const inputFile = c.input.ts ? "index.ts" : "index.js";
         c.input.file = path.join(configLocation, "src", inputFile);
+    } else {
+        c.input.file = path.join(configLocation, c.input.file);
     }
 
     if (c.output === undefined) {
@@ -98,6 +100,8 @@ export const fillInOpts = (
             configLocation,
             makeFileName(userOpts.game.name)
         );
+    } else {
+        c.output.file = path.join(configLocation, c.output.file);
     }
     if (c.output.bundle === undefined) {
         c.output.bundle = BundleType.STANDARD;

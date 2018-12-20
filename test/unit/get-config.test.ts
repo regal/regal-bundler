@@ -163,10 +163,12 @@ describe("Get Config", () => {
             const configCopy: LoadedConfiguration = JSON.parse(
                 JSON.stringify(config)
             );
+            Config.fillInOpts(process.cwd(), configCopy);
 
-            expect(Config.fillInOpts(process.cwd(), configCopy)).toEqual(
-                config
-            );
+            config.bundler.input.file = path.join(process.cwd(), "start.ts");
+            config.bundler.output.file = path.join(process.cwd(), "out.js");
+
+            expect(configCopy).toEqual(config);
         });
 
         it("input.ts defaults to false if input.file is specified as ending with .js", () => {

@@ -5,7 +5,7 @@
  * Licensed under MIT License (see https://github.com/regal/regal-bundler)
  */
 
-export { default as bundle } from "./bundle";
+export { bundle } from "./bundle";
 export { getConfig } from "./get-config";
 export {
     BundlerOptions,
