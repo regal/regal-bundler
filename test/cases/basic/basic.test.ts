@@ -1,5 +1,7 @@
 import * as path from "path";
-import { GameResponse, GameApi } from "regal";
+import * as fs from "fs";
+import { GameApi } from "regal";
+import { lines } from "../../test-utils";
 
 import {
     getConfig,
@@ -8,11 +10,13 @@ import {
     ModuleFormat
     // @ts-ignore: import will be resolved
 } from "../../../dist/regal-bundler.cjs.js";
+import { bundleHeader } from "../../../src/bundle";
 
-const lines = (response: GameResponse) =>
-    response.output.log.map(ol => ol.data);
+describe("Case: Basic", () => {
+    beforeAll(async () => {
+        await bundle({ configLocation: __dirname });
+    });
 
-describe("Case: basic", () => {
     it("Loads the correct configuration", async () => {
         const config = await getConfig({ configLocation: __dirname });
 
@@ -37,7 +41,6 @@ describe("Case: basic", () => {
     });
 
     it("Creates a functional bundle", async () => {
-        await bundle({ configLocation: __dirname });
         // @ts-ignore: import will be resolved
         const Game: GameApi = await import("./basic.regal.js");
 
@@ -62,5 +65,11 @@ describe("Case: basic", () => {
         response = Game.postPlayerCommand(response.instance, "woof");
         expect(response.output.wasSuccessful).toBe(true);
         expect(lines(response)).toEqual(["Command not recognized: 'woof'."]);
+    });
+
+    it("Puts the header at the beginning of the bundle", async () => {
+        fs.readFileSync(path.join(__dirname, "./basic.regal.js"))
+            .toString()
+            .startsWith(bundleHeader());
     });
 });

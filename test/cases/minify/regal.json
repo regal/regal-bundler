@@ -1,0 +1,14 @@
+{
+    "game": {
+        "name": "The Smallest Game",
+        "author": "Joe Cowman"
+    },
+    "bundler": {
+        "input": {
+            "file": "../basic/src/index.ts"
+        },
+        "output": {
+            "minify": true
+        }
+    }
+}
