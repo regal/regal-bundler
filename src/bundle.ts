@@ -5,6 +5,8 @@ import * as _json from "rollup-plugin-json";
 import * as _resolve from "rollup-plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 import * as _typescript from "rollup-plugin-typescript2";
+import * as _virtual from "rollup-plugin-virtual";
+import standardBundle from "./bundle-standard";
 import { getConfig } from "./get-config";
 import { LoadedConfiguration } from "./interfaces-internal";
 import { BundlerOptions, RecursivePartial } from "./interfaces-public";
@@ -14,19 +16,27 @@ const json = _json;
 const resolve = _resolve;
 const typescript = _typescript;
 const commonjs = _commonjs;
+const virtual = _virtual;
+
+const footerCode = (metadata: string) => `
+/* Initialize game */
+Game.init(${metadata});
+/* Generate bundle */
+const bundledGame = makeBundle(Game);
+`;
 
 const esFooter = (metadata: string) => `
 import { Game } from "regal";
-/** Initialize game **/
-Game.init(${metadata});
-export { Game as default };
+import makeBundle from "_bundle";
+${footerCode(metadata)}
+export { bundledGame as default };
 `;
 
 const cjsFooter = (metadata: string) => `
 const Game = require("regal").Game;
-/** Initialize game **/
-Game.init(${metadata});
-module.exports = Game;
+const makeBundle = require("_bundle");
+${footerCode(metadata)}
+module.exports = bundledGame;
 `;
 
 export const bundleFooter = (config: LoadedConfiguration) => {
@@ -39,9 +49,15 @@ export const bundleHeader = () => "/** BUNDLED GAME */";
 export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
     const plugins: rollup.Plugin[] = [];
 
+    const bundleFunc = standardBundle.toString();
+    const footer = bundleFooter(config);
+
     plugins.push(
-        insert.append(bundleFooter(config), {
+        insert.append(footer, {
             include: config.bundler.input.file
+        }),
+        virtual({
+            _bundle: `export default ${bundleFunc};`
         }),
         resolve(),
         json({ exclude: "node_modules/**" })

@@ -3,6 +3,8 @@ import * as rollup from "rollup";
 import { getConfig } from "../../src/get-config";
 import { bundleHeader, getPlugins } from "../../src/bundle";
 import { LoadedConfiguration } from "../../src/interfaces-internal";
+import standardBundle from "../../src/bundle-standard";
+import { onStartCommand, onPlayerCommand, Game } from "regal";
 
 jest.mock("rollup");
 jest.mock("../../src/get-config");
@@ -108,6 +110,48 @@ describe("Bundle", () => {
 
             const plugins = getPlugins(config);
             expect(plugins.find(p => p.name === "rpt2")).toBeUndefined();
+        });
+    });
+
+    describe("Standard Bundle", () => {
+        beforeAll(() => {
+            onStartCommand(game => game.output.write("hi"));
+            onPlayerCommand(cmd => game => game.output.write(cmd));
+            Game.init({
+                name: "My Game",
+                author: "Joe Cowman"
+            });
+        });
+
+        it("Behaves the same as Regal GameApi", () => {
+            const bundle = standardBundle(Game);
+
+            expect(Game.getMetadataCommand()).toEqual(
+                bundle.getMetadataCommand()
+            );
+
+            const seed = { seed: "foo" };
+            const response = bundle.postStartCommand(seed);
+            expect(Game.postStartCommand(seed)).toEqual(response);
+
+            const instance = response.instance;
+            expect(Game.postPlayerCommand(instance, "1")).toEqual(
+                bundle.postPlayerCommand(instance, "1")
+            );
+            expect(Game.postUndoCommand(instance)).toEqual(
+                bundle.postUndoCommand(instance)
+            );
+
+            const opt = { debug: true };
+            expect(Game.postOptionCommand(instance, opt)).toEqual(
+                bundle.postOptionCommand(instance, opt)
+            );
+        });
+
+        it("Does not have Game.init or Game.reset", () => {
+            const bundle = standardBundle(Game) as any;
+            expect(bundle.init).toBeUndefined;
+            expect(bundle.reset).toBeUndefined;
         });
     });
 });
