@@ -17,13 +17,9 @@ export interface BundleConfigInput {
 
 export interface BundleConfigOutput {
     file: string;
-    bundle: BundleType;
+    bundle: string;
     format: ModuleFormat;
     minify: boolean;
-}
-
-export enum BundleType {
-    STANDARD = "standard"
 }
 
 export enum ModuleFormat {

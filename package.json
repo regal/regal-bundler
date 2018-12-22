@@ -49,6 +49,7 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-typescript2": "^0.18.0",
+    "rollup-plugin-virtual": "^1.0.1",
     "sanitize-filename": "^1.6.1"
   },
   "devDependencies": {

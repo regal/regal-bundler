@@ -3,7 +3,7 @@ import * as path from "path";
 
 import * as Config from "../../src/get-config";
 import { LoadedConfiguration } from "../../src/interfaces-internal";
-import { BundleType, ModuleFormat, RecursivePartial } from "../../src";
+import { ModuleFormat, RecursivePartial } from "../../src";
 
 // Mock importing package.json
 const pkgRetValue = jest.fn();
@@ -48,7 +48,7 @@ describe("Get Config", () => {
                     },
                     output: {
                         file: "sample/out",
-                        bundle: BundleType.STANDARD,
+                        bundle: "standard",
                         format: ModuleFormat.CJS,
                         minify: true
                     }
@@ -126,7 +126,7 @@ describe("Get Config", () => {
                     },
                     output: {
                         file: path.join(process.cwd(), "my-cool-game.regal.js"),
-                        bundle: BundleType.STANDARD,
+                        bundle: "standard",
                         format: ModuleFormat.CJS,
                         minify: false
                     }
@@ -153,7 +153,7 @@ describe("Get Config", () => {
                     },
                     output: {
                         file: "out.js",
-                        bundle: BundleType.STANDARD,
+                        bundle: "standard",
                         format: ModuleFormat.ESM,
                         minify: true
                     }
@@ -237,7 +237,7 @@ describe("Get Config", () => {
                 format: ModuleFormat.ESM,
                 minify: false,
                 file: path.join(__dirname, "my-cool-game.regal.js"),
-                bundle: BundleType.STANDARD
+                bundle: "standard"
             });
         });
 
