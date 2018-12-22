@@ -1,7 +1,12 @@
 import { bundle, ModuleFormat } from "../../src";
 import * as rollup from "rollup";
 import { getConfig } from "../../src/get-config";
-import { bundleHeader, getPlugins } from "../../src/bundle";
+import {
+    bundleHeader,
+    getPlugins,
+    makeBundler,
+    esFooter
+} from "../../src/bundle";
 import { LoadedConfiguration } from "../../src/interfaces-internal";
 import standardBundle from "../../src/bundle-standard";
 import { onStartCommand, onPlayerCommand, Game } from "regal";
@@ -110,6 +115,29 @@ describe("Bundle", () => {
 
             const plugins = getPlugins(config);
             expect(plugins.find(p => p.name === "rpt2")).toBeUndefined();
+        });
+    });
+
+    describe("makeBundler", () => {
+        it("Returns a standard bundle footer and plugin", () => {
+            const config = sampleConfig();
+            config.bundler.output.bundle = "standard";
+
+            const { bundleFooter, bundlePlugin } = makeBundler(config);
+
+            expect(bundleFooter).toBe(
+                esFooter(JSON.stringify(config.game, undefined, 2))
+            );
+            expect(bundlePlugin.name).toBe("virtual");
+        });
+
+        it("Throws an error if a config other than standard is used", () => {
+            const config = sampleConfig();
+            config.bundler.output.bundle = "foo";
+
+            expect(() => makeBundler(config)).toThrow(
+                "RegalError: Illegal bundle type: foo"
+            );
         });
     });
 
