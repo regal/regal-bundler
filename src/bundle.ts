@@ -88,7 +88,8 @@ export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
             (typescript as any)({
                 tsconfigOverride: {
                     compilerOptions: { module: "es2015" }
-                }
+                },
+                clean: true // Cache needs to be wiped so that concurrent bundles don't fail
             })
         );
     } else {
