@@ -111,8 +111,6 @@ export const makeOutputOpts = (config: LoadedConfiguration) => {
     const format = config.bundler.output.format.toLowerCase();
     switch (format) {
         case ModuleFormat.CJS:
-            output.format = format;
-            break;
         case ModuleFormat.ESM:
             output.format = format;
             break;
