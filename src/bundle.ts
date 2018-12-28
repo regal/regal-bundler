@@ -10,7 +10,11 @@ import * as _virtual from "rollup-plugin-virtual";
 import standardBundle from "./bundle-standard";
 import { getConfig } from "./get-config";
 import { LoadedConfiguration } from "./interfaces-internal";
-import { BundlerOptions, RecursivePartial } from "./interfaces-public";
+import {
+    BundlerOptions,
+    ModuleFormat,
+    RecursivePartial
+} from "./interfaces-public";
 
 // Alias imports to allow executing namespaces
 const json = _json;
@@ -84,7 +88,8 @@ export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
             (typescript as any)({
                 tsconfigOverride: {
                     compilerOptions: { module: "es2015" }
-                }
+                },
+                clean: true // Cache needs to be wiped so that concurrent bundles don't fail
             })
         );
     } else {
@@ -98,6 +103,32 @@ export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
     return plugins;
 };
 
+export const makeOutputOpts = (config: LoadedConfiguration) => {
+    const output = {
+        file: config.bundler.output.file
+    } as rollup.OutputOptions;
+
+    const format = config.bundler.output.format.toLowerCase();
+    switch (format) {
+        case ModuleFormat.CJS:
+        case ModuleFormat.ESM:
+            output.format = format;
+            break;
+        case ModuleFormat.UMD:
+            output.format = format;
+            output.name = "Game";
+            break;
+        default:
+            throw new RegalError(`Illegal module format: ${format}`);
+    }
+
+    if (!config.bundler.output.minify) {
+        output.banner = bundleHeader();
+    }
+
+    return output;
+};
+
 export const bundle = async (opts: RecursivePartial<BundlerOptions> = {}) => {
     const config = await getConfig(opts);
     const plugins = getPlugins(config);
@@ -109,14 +140,6 @@ export const bundle = async (opts: RecursivePartial<BundlerOptions> = {}) => {
 
     const build = await rollup.rollup(inputOpts);
 
-    const outputOpts: rollup.OutputOptions = {
-        file: config.bundler.output.file,
-        format: config.bundler.output.format
-    };
-
-    if (!config.bundler.output.minify) {
-        outputOpts.banner = bundleHeader();
-    }
-
+    const outputOpts = makeOutputOpts(config);
     await build.write(outputOpts);
 };

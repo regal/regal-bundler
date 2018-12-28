@@ -5,7 +5,8 @@ import {
     bundleHeader,
     getPlugins,
     makeBundler,
-    esFooter
+    esFooter,
+    makeOutputOpts
 } from "../../src/bundle";
 import { LoadedConfiguration } from "../../src/interfaces-internal";
 import standardBundle from "../../src/bundle-standard";
@@ -137,6 +138,45 @@ describe("Bundle", () => {
 
             expect(() => makeBundler(config)).toThrow(
                 "RegalError: Illegal bundle type: foo"
+            );
+        });
+    });
+
+    describe("makeOutputOpts", () => {
+        it("Includes the output file", () => {
+            const config = sampleConfig();
+            expect(makeOutputOpts(config).file).toBe(
+                config.bundler.output.file
+            );
+        });
+
+        it("Allows CJS module format", () => {
+            const config = sampleConfig();
+            config.bundler.output.format = ModuleFormat.CJS;
+            expect(makeOutputOpts(config).format).toBe(ModuleFormat.CJS);
+        });
+
+        it("Allows ESM module format", () => {
+            const config = sampleConfig();
+            config.bundler.output.format = ModuleFormat.ESM;
+            expect(makeOutputOpts(config).format).toBe(ModuleFormat.ESM);
+        });
+
+        it("Allows UMD module format and sets the output name", () => {
+            const config = sampleConfig();
+            config.bundler.output.format = ModuleFormat.UMD;
+
+            const opts = makeOutputOpts(config);
+            expect(opts.format).toBe(ModuleFormat.UMD);
+            expect(opts.name).toBe("Game");
+        });
+
+        it("Rejects other module formats", () => {
+            const config = sampleConfig();
+            (config.bundler.output as any).format = "lars";
+
+            expect(() => makeOutputOpts(config)).toThrow(
+                "RegalError: Illegal module format: lars"
             );
         });
     });
