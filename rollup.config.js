@@ -7,11 +7,11 @@ import inject from "acorn-dynamic-import/lib/inject";
 import pkg from "./package.json";
 
 const banner = `/**
- * Regal bundler source.
+ * Regal Bundler
  *
  * Copyright (c) Joe Cowman
  * Licensed under MIT License (see https://github.com/regal/regal-bundler)
- */`
+ */`;
 
 /** Suppress Rollup's circular import warnings for TypeScript files */
 const suppressCircularImportWarnings = (message, defaultFunc) => {
@@ -19,7 +19,7 @@ const suppressCircularImportWarnings = (message, defaultFunc) => {
         return;
     }
     defaultFunc(message);
-}
+};
 
 const tsPlugin = typescript({
     tsconfigOverride: {
@@ -53,4 +53,4 @@ export default [
         ],
         onwarn: suppressCircularImportWarnings
     }
-]
+];

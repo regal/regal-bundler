@@ -1,3 +1,10 @@
+/*
+ * Contains functions for generating game bundles with Rollup.
+ *
+ * Copyright (c) Joseph R Cowman
+ * Licensed under MIT License (see https://github.com/regal/regal-bundler)
+ */
+
 import { RegalError } from "regal";
 import * as rollup from "rollup";
 import * as _commonjs from "rollup-plugin-commonjs";
@@ -23,6 +30,10 @@ const typescript = _typescript;
 const commonjs = _commonjs;
 const virtual = _virtual;
 
+/**
+ * Format-agnostic footer code.
+ * @param metadata Stringified game metadata.
+ */
 const footerCode = (metadata: string) => `
 /* Initialize game */
 Game.init(${metadata});
@@ -30,6 +41,10 @@ Game.init(${metadata});
 const bundledGame = makeBundle(Game);
 `;
 
+/**
+ * Imports and exports used for bundles in ESM format.
+ * @param metadata Stringified game metadata.
+ */
 export const esFooter = (metadata: string) => `
 import { Game } from "regal";
 import makeBundle from "_bundle";
@@ -37,6 +52,10 @@ ${footerCode(metadata)}
 export { bundledGame as default };
 `;
 
+/**
+ * Imports and exports used for bundles in CJS format.
+ * @param metadata Stringified game metadata.
+ */
 export const cjsFooter = (metadata: string) => `
 const Game = require("regal").Game;
 const makeBundle = require("_bundle");
@@ -44,11 +63,19 @@ ${footerCode(metadata)}
 module.exports = bundledGame;
 `;
 
+/**
+ * Generates code that's appended to the game bundle.
+ * @param config The loaded configuration.
+ */
 export const makeBundleFooter = (config: LoadedConfiguration) => {
     const footer = config.bundler.input.ts ? esFooter : cjsFooter;
     return footer(JSON.stringify(config.game, undefined, 2));
 };
 
+/**
+ * Loads the appropriate game bundler (for now, only `standard` is supported).
+ * @param config The loaded configuration.
+ */
 export const makeBundler = (config: LoadedConfiguration) => {
     let bundleFunc: string;
 
@@ -69,6 +96,10 @@ export const makeBundler = (config: LoadedConfiguration) => {
 
 export const bundleHeader = () => "/** BUNDLED GAME */";
 
+/**
+ * Load and configure the appropriate Rollup plugins.
+ * @param config The loaded configuration.
+ */
 export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
     const plugins: rollup.Plugin[] = [];
 
@@ -103,6 +134,10 @@ export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
     return plugins;
 };
 
+/**
+ * Creates the Rollup output option object given the loaded configuration.
+ * @param config The loaded configuration.
+ */
 export const makeOutputOpts = (config: LoadedConfiguration) => {
     const output = {
         file: config.bundler.output.file
@@ -129,6 +164,10 @@ export const makeOutputOpts = (config: LoadedConfiguration) => {
     return output;
 };
 
+/**
+ * Generates a Regal game bundle.
+ * @param opts Configuration for the bundler (optional).
+ */
 export const bundle = async (opts: RecursivePartial<BundlerOptions> = {}) => {
     const config = await getConfig(opts);
     const plugins = getPlugins(config);
