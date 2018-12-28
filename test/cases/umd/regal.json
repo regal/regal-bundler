@@ -1,0 +1,14 @@
+{
+    "game": {
+        "name": "My UMD Game",
+        "author": "Joe Cowman"
+    },
+    "bundler": {
+        "input": {
+            "file": "../basic/src/index.ts"
+        },
+        "output": {
+            "format": "umd"
+        }
+    }
+}

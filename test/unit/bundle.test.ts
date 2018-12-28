@@ -168,7 +168,7 @@ describe("Bundle", () => {
 
             const opts = makeOutputOpts(config);
             expect(opts.format).toBe(ModuleFormat.UMD);
-            expect(opts.name).toBe("GameBundle");
+            expect(opts.name).toBe("Game");
         });
 
         it("Rejects other module formats", () => {

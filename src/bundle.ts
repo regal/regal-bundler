@@ -116,7 +116,7 @@ export const makeOutputOpts = (config: LoadedConfiguration) => {
             break;
         case ModuleFormat.UMD:
             output.format = format;
-            output.name = "GameBundle";
+            output.name = "Game";
             break;
         default:
             throw new RegalError(`Illegal module format: ${format}`);
