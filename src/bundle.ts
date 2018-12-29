@@ -94,7 +94,16 @@ export const makeBundler = (config: LoadedConfiguration) => {
     };
 };
 
-export const bundleHeader = () => "/** BUNDLED GAME */";
+/**
+ * Generates the header comment put at the top of the emitted bundle.
+ * @param config The loaded configuration.
+ */
+export const bundleHeader = (config: LoadedConfiguration) => `/** 
+* ${config.game.name}
+* by ${config.game.author}
+*
+* Powered by the Regal Framework (https://github.com/regal/regal).
+*/`;
 
 /**
  * Load and configure the appropriate Rollup plugins.
@@ -128,7 +137,7 @@ export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
     }
 
     if (config.bundler.output.minify) {
-        plugins.push(terser({ output: { preamble: bundleHeader() } }));
+        plugins.push(terser({ output: { preamble: bundleHeader(config) } }));
     }
 
     return plugins;
@@ -158,7 +167,7 @@ export const makeOutputOpts = (config: LoadedConfiguration) => {
     }
 
     if (!config.bundler.output.minify) {
-        output.banner = bundleHeader();
+        output.banner = bundleHeader(config);
     }
 
     return output;

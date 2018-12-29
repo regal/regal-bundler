@@ -58,7 +58,7 @@ describe("Bundle", () => {
             expect(bundleWrite).toBeCalledWith({
                 file: config.bundler.output.file,
                 format: config.bundler.output.format,
-                banner: bundleHeader()
+                banner: bundleHeader(config)
             });
         });
 
@@ -70,7 +70,9 @@ describe("Bundle", () => {
 
             await bundle();
 
-            expect(bundleWrite.mock.calls[0][0].banner).toBe(bundleHeader());
+            expect(bundleWrite.mock.calls[0][0].banner).toBe(
+                bundleHeader(config)
+            );
         });
 
         it("Does not include the header as a rollup banner if minify is true", async () => {

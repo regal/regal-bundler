@@ -67,8 +67,9 @@ describe("Case: Basic", () => {
     });
 
     it("Puts the header at the beginning of the bundle", async () => {
+        const config = await getConfig({ configLocation: __dirname });
         fs.readFileSync(path.join(__dirname, "./basic.regal.js"))
             .toString()
-            .startsWith(bundleHeader());
+            .startsWith(bundleHeader(config));
     });
 });
