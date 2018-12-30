@@ -5,7 +5,7 @@ import { lines } from "../../test-utils";
 import { bundleHeader } from "../../../src/bundle";
 
 // @ts-ignore: import will be resolved
-import { bundle } from "../../../dist/regal-bundler.cjs.js";
+import { bundle, getConfig } from "../../../dist/regal-bundler.cjs.js";
 
 describe("Case: Minify", () => {
     beforeAll(
@@ -42,13 +42,14 @@ describe("Case: Minify", () => {
         expect(lines(response)).toEqual(["Command not recognized: 'woof'."]);
     });
 
-    it("Minified file is the correct number of lines", () => {
+    it("Minified file is the correct number of lines", async () => {
+        const config = await getConfig({ configLocation: __dirname });
         const file = fs.readFileSync(
             path.join(__dirname, "./the-smallest-game.regal.js")
         );
         const actualLines = file.toString().split("\n").length;
 
-        const expectedLines = bundleHeader().split("\n").length + 2; // Header line(s) + one line of source + empty line
+        const expectedLines = bundleHeader(config).split("\n").length + 2; // Header line(s) + one line of source + empty line
 
         expect(actualLines).toBe(expectedLines);
     });

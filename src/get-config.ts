@@ -1,3 +1,10 @@
+/*
+ * Contains functions for loading custom bundler/game configuration.
+ *
+ * Copyright (c) Joseph R Cowman
+ * Licensed under MIT License (see https://github.com/regal/regal-bundler)
+ */
+
 import * as _slugify from "@sindresorhus/slugify";
 import * as _cosmiconfig from "cosmiconfig";
 import * as path from "path";
@@ -26,6 +33,11 @@ const metadataKeys: Array<keyof GameMetadata> = [
     "repository"
 ];
 
+/**
+ * Loads user configuration, searching in `regal.json` and the
+ * `regal` property in `package.json`.
+ * @param configLocation The directory to search.
+ */
 export const loadUserConfig = async (
     configLocation: string
 ): Promise<RecursivePartial<LoadedConfiguration>> => {
@@ -63,6 +75,12 @@ export const loadUserConfig = async (
 const makeFileName = (gameName: string) =>
     `${sanitize(slugify(gameName))}.regal.js`;
 
+/**
+ * Fills in omitted configuration options with their default values,
+ * modifying the original object.
+ * @param configLocation The directory to search.
+ * @param userOpts The configuration object.
+ */
 export const fillInOpts = (
     configLocation: string,
     userOpts: RecursivePartial<LoadedConfiguration>
@@ -117,6 +135,17 @@ export const fillInOpts = (
     return userOpts as LoadedConfiguration;
 };
 
+/**
+ * Loads user configuration, searching in `regal.json` and the
+ * `regal` property in `package.json`.
+ *
+ * @param opts Bundler configuration options and the directory
+ * to search for user config (optional). If `configLocation` is
+ * omitted, the current working directory will be used. Values in
+ * `opts.bundler` will override those found by the config loader.
+ * If no value is found for a given property, a default value will
+ * be used in its place.
+ */
 export const getConfig = async (
     opts: RecursivePartial<BundlerOptions> = {}
 ): Promise<LoadedConfiguration> => {
