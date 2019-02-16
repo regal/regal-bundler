@@ -1,5 +1,6 @@
 import { LoadedConfiguration } from "./interfaces-internal";
 import { BundlerOptions, RecursivePartial } from "./interfaces-public";
+export declare const importDynamic: (s: string) => Promise<any>;
 /**
  * Loads user configuration, searching in `regal.json` and the
  * `regal` property in `package.json`.

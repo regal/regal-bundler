@@ -33,6 +33,9 @@ const metadataKeys: Array<keyof GameMetadata> = [
     "repository"
 ];
 
+/* Wrapper for dynamic imports so that they can be mocked during tests. */
+export const importDynamic = (s: string) => import(s);
+
 /**
  * Loads user configuration, searching in `regal.json` and the
  * `regal` property in `package.json`.
@@ -59,7 +62,21 @@ export const loadUserConfig = async (
     }
 
     const pkgPath = path.join(configLocation, "package.json");
-    const pkg = await import(pkgPath);
+
+    let pkg;
+    try {
+        pkg = await importDynamic(pkgPath);
+    } catch (ex1) {
+        // If configLocation can't be resolved, attempt to resolve it
+        // relative to the current working directory.
+        try {
+            pkg = await importDynamic(path.join(process.cwd(), pkgPath));
+        } catch (ex2) {
+            throw new RegalError(
+                `Could not resolve configLocation at ${pkgPath}`
+            );
+        }
+    }
 
     const metadata: RecursivePartial<Writeable<GameMetadata>> = config.game;
 

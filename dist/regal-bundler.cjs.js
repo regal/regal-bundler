@@ -74,6 +74,8 @@ const metadataKeys = [
     "homepage",
     "repository"
 ];
+/* Wrapper for dynamic imports so that they can be mocked during tests. */
+const importDynamic = (s) => Promise.resolve(require(s));
 /**
  * Loads user configuration, searching in `regal.json` and the
  * `regal` property in `package.json`.
@@ -95,7 +97,20 @@ const loadUserConfig = (configLocation) => __awaiter(undefined, void 0, void 0, 
         config.game = {};
     }
     const pkgPath = path.join(configLocation, "package.json");
-    const pkg = yield Promise.resolve(require(pkgPath));
+    let pkg;
+    try {
+        pkg = yield importDynamic(pkgPath);
+    }
+    catch (ex1) {
+        // If configLocation can't be resolved, attempt to resolve it
+        // relative to the current working directory.
+        try {
+            pkg = yield importDynamic(path.join(process.cwd(), pkgPath));
+        }
+        catch (ex2) {
+            throw new regal.RegalError(`Could not resolve configLocation at ${pkgPath}`);
+        }
+    }
     const metadata = config.game;
     for (const mk of metadataKeys) {
         if (metadata[mk] === undefined && pkg[mk] !== undefined) {
@@ -325,6 +340,7 @@ const bundle = (opts = {}) => __awaiter(undefined, void 0, void 0, function* () 
     const build = yield rollup.rollup(inputOpts);
     const outputOpts = makeOutputOpts(config);
     yield build.write(outputOpts);
+    console.log(`Created a game bundle for '${config.game.name}' at ${outputOpts.file}`);
 });
 
 exports.bundle = bundle;

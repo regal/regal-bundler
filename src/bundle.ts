@@ -190,4 +190,9 @@ export const bundle = async (opts: RecursivePartial<BundlerOptions> = {}) => {
 
     const outputOpts = makeOutputOpts(config);
     await build.write(outputOpts);
+
+    // tslint:disable-next-line:no-console
+    console.log(
+        `Created a game bundle for '${config.game.name}' at ${outputOpts.file}`
+    );
 };
