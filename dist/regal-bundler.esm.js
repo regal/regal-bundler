@@ -337,6 +337,7 @@ const bundle = (opts = {}) => __awaiter(undefined, void 0, void 0, function* () 
     const build = yield rollup(inputOpts);
     const outputOpts = makeOutputOpts(config);
     yield build.write(outputOpts);
+    console.log(`Created a game bundle for '${config.game.name}' at ${outputOpts.file}`);
 });
 
 export { bundle, getConfig, ModuleFormat };
