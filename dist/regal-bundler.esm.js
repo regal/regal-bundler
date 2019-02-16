@@ -71,6 +71,8 @@ const metadataKeys = [
     "homepage",
     "repository"
 ];
+/* Wrapper for dynamic imports so that they can be mocked during tests. */
+const importDynamic = (s) => import(s);
 /**
  * Loads user configuration, searching in `regal.json` and the
  * `regal` property in `package.json`.
@@ -92,7 +94,20 @@ const loadUserConfig = (configLocation) => __awaiter(undefined, void 0, void 0, 
         config.game = {};
     }
     const pkgPath = join(configLocation, "package.json");
-    const pkg = yield import(pkgPath);
+    let pkg;
+    try {
+        pkg = yield importDynamic(pkgPath);
+    }
+    catch (ex1) {
+        // If configLocation can't be resolved, attempt to resolve it
+        // relative to the current working directory.
+        try {
+            pkg = yield importDynamic(join(process.cwd(), pkgPath));
+        }
+        catch (ex2) {
+            throw new RegalError(`Could not resolve configLocation at ${pkgPath}`);
+        }
+    }
     const metadata = config.game;
     for (const mk of metadataKeys) {
         if (metadata[mk] === undefined && pkg[mk] !== undefined) {
