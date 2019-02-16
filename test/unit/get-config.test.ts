@@ -4,12 +4,11 @@ import * as path from "path";
 import * as Config from "../../src/get-config";
 import { LoadedConfiguration } from "../../src/interfaces-internal";
 import { ModuleFormat, RecursivePartial } from "../../src";
+import { RegalError } from "regal";
 
 // Mock importing package.json
-const pkgRetValue = jest.fn();
-jest.mock("../../package.json", () => pkgRetValue());
 const mockPkgImport = (config: any) => {
-    pkgRetValue.mockResolvedValue(config);
+    return jest.spyOn(Config, "importDynamic").mockResolvedValue(config);
 };
 
 // Mock cosmiconfig.search
@@ -23,9 +22,18 @@ const mockCosmiconfig = (config: any) => {
 };
 
 describe("Get Config", () => {
+    it("dynamicImport wrapper works properly", async () => {
+        const mockTest = jest.fn();
+        jest.mock("../../package.json", () => mockTest());
+        const p = path.join(process.cwd(), "package.json");
+        await Config.importDynamic(p);
+        expect(mockTest).toHaveBeenCalled();
+    });
+
     describe("loadUserConfig", () => {
         afterEach(() => {
             jest.resetModules(); // Solves race condition
+            jest.resetAllMocks();
         });
 
         it("Can load a full configuration", async () => {
@@ -103,6 +111,53 @@ describe("Get Config", () => {
             const config = await Config.loadUserConfig(process.cwd());
 
             expect(config).toEqual(regalConfig);
+        });
+
+        it("If configLocation can't be resolved, attempt to resolve it relative to the current working directory", async () => {
+            mockCosmiconfig({});
+
+            const pkgConfig = {
+                name: "regal-my-cool-game",
+                author: "jcowman"
+            };
+
+            const configLocation = "./rel";
+            const relativePath = path.join(configLocation, "package.json");
+            const absolutePath = path.join(process.cwd(), relativePath);
+
+            const checkFail = jest.fn();
+            const importSpy = jest
+                .spyOn(Config, "importDynamic")
+                .mockImplementation(arg => {
+                    if (arg === absolutePath) {
+                        return Promise.resolve(pkgConfig);
+                    } else {
+                        checkFail(arg);
+                        return Promise.reject("Could not resolve.");
+                    }
+                });
+
+            const config = await Config.loadUserConfig(configLocation);
+
+            expect(config).toEqual({
+                game: pkgConfig
+            });
+            expect(importSpy).toBeCalledTimes(2);
+            expect(importSpy).toBeCalledWith(relativePath);
+            expect(importSpy).toBeCalledWith(absolutePath);
+            expect(checkFail).toBeCalledTimes(1);
+            expect(checkFail).toBeCalledWith(relativePath);
+        });
+
+        it("If the fallback for loading configLocation doesn't work, throw an error", async () => {
+            mockCosmiconfig({});
+            jest.spyOn(Config, "importDynamic").mockRejectedValue("err");
+
+            expect(Config.loadUserConfig("foo")).rejects.toEqual(
+                new RegalError(
+                    "Could not resolve configLocation at foo\\package.json"
+                )
+            );
         });
     });
 
