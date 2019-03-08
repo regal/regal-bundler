@@ -1,6 +1,6 @@
 {
   "name": "regal-bundler",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Utility that packages a Regal game into a deployable game bundle",
   "author": "Joe Cowman <joe.r.cowman@gmail.com> (http://joecowman.com)",
   "license": "MIT",
@@ -41,7 +41,6 @@
     "@sindresorhus/slugify": "^0.6.0",
     "cosmiconfig": "^5.0.7",
     "path": "^0.12.7",
-    "regal": "^1.0.0",
     "rollup": "^0.67.4",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-insert": "^0.2.0",
@@ -50,7 +49,11 @@
     "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-typescript2": "^0.18.0",
     "rollup-plugin-virtual": "^1.0.1",
-    "sanitize-filename": "^1.6.1"
+    "sanitize-filename": "^1.6.1",
+    "typescript": "^3.3.3333"
+  },
+  "peerDependencies": {
+    "regal": "^1.0.0"
   },
   "devDependencies": {
     "@types/cosmiconfig": "^5.0.3",
@@ -60,13 +63,13 @@
     "cz-conventional-changelog": "^2.1.0",
     "jest": "^23.6.0",
     "prettier": "^1.15.3",
+    "regal": "^1.0.0",
     "rollup-plugin-cleanup": "^3.1.0",
     "trash-cli": "^1.4.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.2.2"
+    "tslint-plugin-prettier": "^2.0.1"
   },
   "prettier": {
     "tabWidth": 4
