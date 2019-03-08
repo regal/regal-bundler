@@ -110,7 +110,7 @@ The module format of the bundle. Options: `cjs`, `esm`, `umd`. Defaults to `cjs`
 
 #### `bundler.output.minify`: boolean
 
-Whether minification should be done on the bundle after it's generated. Defaults to true.
+Whether minification should be done on the bundle after it's generated. Defaults to false.
 
 ### Bundles
 
