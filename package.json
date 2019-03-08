@@ -1,6 +1,6 @@
 {
   "name": "regal-bundler",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Utility that packages a Regal game into a deployable game bundle",
   "author": "Joe Cowman <joe.r.cowman@gmail.com> (http://joecowman.com)",
   "license": "MIT",
