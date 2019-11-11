@@ -47,13 +47,13 @@
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
-    "rollup-plugin-typescript2": "^0.18.0",
+    "rollup-plugin-typescript2": "^0.25.2",
     "rollup-plugin-virtual": "^1.0.1",
     "sanitize-filename": "^1.6.1",
     "typescript": "^3.3.3333"
   },
   "peerDependencies": {
-    "regal": "^1.0.0"
+    "regal": "^2.0.0"
   },
   "devDependencies": {
     "@types/cosmiconfig": "^5.0.3",
@@ -63,7 +63,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "jest": "^23.6.0",
     "prettier": "^1.15.3",
-    "regal": "^1.0.0",
+    "regal": "^2.0.0",
     "rollup-plugin-cleanup": "^3.1.0",
     "trash-cli": "^1.4.0",
     "ts-jest": "^23.10.5",
