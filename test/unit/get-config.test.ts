@@ -159,6 +159,8 @@ describe("Get Config", () => {
                 )
             );
         });
+
+        it("Loads the gameVersion from package.json", async () => {});
     });
 
     describe("fillInOpts", () => {

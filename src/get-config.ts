@@ -86,6 +86,8 @@ export const loadUserConfig = async (
         }
     }
 
+    // TODO - Set gameVersion here
+
     return config;
 };
 
