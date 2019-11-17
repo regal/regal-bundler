@@ -99,7 +99,9 @@ export const makeBundler = (config: LoadedConfiguration) => {
  * @param config The loaded configuration.
  */
 export const bundleHeader = (config: LoadedConfiguration) => `/** 
-* ${config.game.name}
+* ${config.game.name} ${
+    config.game.gameVersion !== undefined ? config.game.gameVersion : ""
+}
 * by ${config.game.author}
 *
 * Powered by the Regal Framework (https://github.com/regal/regal).
