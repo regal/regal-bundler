@@ -63,12 +63,17 @@ describe("Get Config", () => {
                 }
             };
 
-            mockPkgImport({});
+            mockPkgImport({
+                version: "2.0.2"
+            });
             mockCosmiconfig(regalConfig);
 
             const config = await Config.loadUserConfig(process.cwd());
 
-            expect(config).toEqual(regalConfig);
+            expect(config).toEqual({
+                game: { ...regalConfig.game, gameVersion: "2.0.2" },
+                bundler: regalConfig.bundler
+            });
         });
 
         it("Loads some metadata values from package.json if no Regal config is present", async () => {
@@ -153,14 +158,55 @@ describe("Get Config", () => {
             mockCosmiconfig({});
             jest.spyOn(Config, "importDynamic").mockRejectedValue("err");
 
-            expect(Config.loadUserConfig("foo")).rejects.toEqual(
+            const expectedPath = path.join("foo", "package.json");
+
+            await expect(Config.loadUserConfig("foo")).rejects.toEqual(
                 new RegalError(
-                    "Could not resolve configLocation at foo\\package.json"
+                    `Could not resolve configLocation at ${expectedPath}`
                 )
             );
         });
 
-        it("Loads the gameVersion from package.json", async () => {});
+        it("Loads the gameVersion from package.json", async () => {
+            const pkgConfig = {
+                name: "regal-my-cool-game",
+                author: "jcowman",
+                version: "1.2.1"
+            };
+
+            mockCosmiconfig({});
+            mockPkgImport(pkgConfig);
+
+            const config = await Config.loadUserConfig(process.cwd());
+            expect(config.game.gameVersion).toEqual("1.2.1");
+        });
+
+        it("Setting gameVersion in the Regal config does not set the value (when version is defined)", async () => {
+            const pkgConfig = {
+                name: "regal-my-cool-game",
+                author: "jcowman",
+                version: "1.0.0"
+            };
+
+            mockCosmiconfig({ game: { gameVersion: "2.1.2" } });
+            mockPkgImport(pkgConfig);
+
+            const config = await Config.loadUserConfig(process.cwd());
+            expect(config.game.gameVersion).toEqual("1.0.0");
+        });
+
+        it("Setting gameVersion in the Regal config does not set the value (when version is undefined)", async () => {
+            const pkgConfig = {
+                name: "regal-my-cool-game",
+                author: "jcowman"
+            };
+
+            mockCosmiconfig({ game: { gameVersion: "2.1.2" } });
+            mockPkgImport(pkgConfig);
+
+            const config = await Config.loadUserConfig(process.cwd());
+            expect(config.game.gameVersion).toBeUndefined();
+        });
     });
 
     describe("fillInOpts", () => {

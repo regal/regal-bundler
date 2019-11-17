@@ -114,6 +114,10 @@ const loadUserConfig = (configLocation) => __awaiter(undefined, void 0, void 0, 
             metadata[mk] = pkg[mk];
         }
     }
+    if (metadata.gameVersion) {
+        console.warn(`gameVersion must be configured by the version property of package.json, not by setting gameVersion yourself. In this case, "${metadata.gameVersion}" will be ignored and "${pkg.version}" will be used in the bundle's metadata instead.`);
+    }
+    metadata.gameVersion = pkg.version;
     return config;
 });
 const makeFileName = (gameName) => `${sanitize(slugify(gameName))}.regal.js`;
