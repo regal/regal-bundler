@@ -86,6 +86,19 @@ export const loadUserConfig = async (
         }
     }
 
+    if (metadata.gameVersion) {
+        // tslint:disable-next-line: no-console
+        console.warn(
+            `gameVersion must be configured by the version property of package.json, not by setting gameVersion yourself. In this case, "${
+                metadata.gameVersion
+            }" will be ignored and "${
+                pkg.version
+            }" will be used in the bundle's metadata instead.`
+        );
+    }
+
+    metadata.gameVersion = pkg.version;
+
     return config;
 };
 
