@@ -18,7 +18,8 @@ jest.mock("../../src/get-config");
 const sampleConfig = () => ({
     game: {
         name: "My Cool Game",
-        author: "Joe Cowman"
+        author: "Joe Cowman",
+        gameVersion: "1.0.0"
     },
     bundler: {
         input: {
@@ -222,6 +223,22 @@ describe("Bundle", () => {
             const bundle = standardBundle(Game) as any;
             expect(bundle.init).toBeUndefined;
             expect(bundle.reset).toBeUndefined;
+        });
+    });
+
+    describe("Code injections", () => {
+        it("bundleHeader includes the version number if it's provided", () => {
+            const config = sampleConfig();
+            expect(
+                bundleHeader(config).includes(config.game.gameVersion)
+            ).toBeTruthy();
+        });
+
+        it("bundleHeader does not include the version number if it's undefined", () => {
+            const config = sampleConfig();
+            config.game.gameVersion = undefined;
+
+            expect(bundleHeader(config).includes("undefined")).toBeFalsy();
         });
     });
 });

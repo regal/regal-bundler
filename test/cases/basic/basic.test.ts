@@ -34,7 +34,8 @@ describe("Case: Basic", () => {
             },
             game: {
                 name: "basic",
-                author: "Bob Basic"
+                author: "Bob Basic",
+                gameVersion: "1.0.0"
             }
         });
     });
