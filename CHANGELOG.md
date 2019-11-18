@@ -10,7 +10,6 @@
 * Update `regal` to "^2.0.0" ([ae073d7](https://github.com/regal/regal-bundler/commit/ae073d7d7c4b663bd0e8aee17d83ab01fd554e39))
 * Bump `rollup-plugin-typescript2` to "^0.25.2" ([ae073d7](https://github.com/regal/regal-bundler/commit/ae073d7d7c4b663bd0e8aee17d83ab01fd554e39))
 
-
 ## v1.2.0 (2019-03-08)
 
 ### Dependency Changes
