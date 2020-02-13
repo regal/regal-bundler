@@ -288,7 +288,10 @@ const getPlugins = (config) => {
     if (config.bundler.input.ts) {
         plugins.unshift(typescript({
             tsconfigOverride: {
-                compilerOptions: { module: "es2015" }
+                compilerOptions: {
+                    module: "es2015",
+                    target: "es2015"
+                }
             },
             clean: true // Cache needs to be wiped so that concurrent bundles don't fail
         }));

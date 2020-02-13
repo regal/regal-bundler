@@ -129,7 +129,10 @@ export const getPlugins = (config: LoadedConfiguration): rollup.Plugin[] => {
         plugins.unshift(
             (typescript as any)({
                 tsconfigOverride: {
-                    compilerOptions: { module: "es2015" }
+                    compilerOptions: {
+                        module: "es2015",
+                        target: "es2015"
+                    }
                 },
                 clean: true // Cache needs to be wiped so that concurrent bundles don't fail
             })

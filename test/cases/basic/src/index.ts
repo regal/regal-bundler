@@ -1,31 +1,39 @@
-import { onStartCommand, onPlayerCommand, on, noop } from "regal";
+import { onStartCommand, onPlayerCommand, on, noop, Agent } from "regal";
+
+class MyAgent extends Agent {
+    constructor(public num: number) {
+        super();
+    }
+}
 
 interface State {
-    num: number;
+    tracker: MyAgent;
 }
 
 const init = on<State>("INIT", game => {
     game.output.write("Game initialized to zero.");
-    game.state.num = 0;
+    game.state.tracker = new MyAgent(0);
 });
 
 const incr = on<State>("INCR", game =>
     game.output.write(
-        `Game state incremented from ${game.state.num} to ${++game.state.num}.`
+        `Game state incremented from ${game.state.tracker.num} to ${++game.state
+            .tracker.num}.`
     )
 );
 
 const decr = on<State>("DECR", game =>
     game.output.write(
-        `Game state decremented from ${game.state.num} to ${--game.state.num}.`
+        `Game state decremented from ${game.state.tracker.num} to ${--game.state
+            .tracker.num}.`
     )
 );
 
 onStartCommand(init);
 onPlayerCommand(cmd => game => {
-    if (cmd.startsWith("i")) {
+    if (cmd.charAt(0) === "i") {
         return incr;
-    } else if (cmd.startsWith("d")) {
+    } else if (cmd.charAt(0) === "d") {
         return decr;
     }
     game.output.write(`Command not recognized: '${cmd}'.`);
