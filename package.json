@@ -61,7 +61,7 @@
     "commitizen": "^3.0.5",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
-    "jest": "^23.6.0",
+    "jest": "^29.3.1",
     "prettier": "^1.15.3",
     "regal": "^2.0.0",
     "rollup-plugin-cleanup": "^3.1.0",
